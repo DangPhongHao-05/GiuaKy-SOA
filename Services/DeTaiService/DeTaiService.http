@@ -1,0 +1,6 @@
+@DeTaiService_HostAddress = http://localhost:5234
+
+GET {{DeTaiService_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

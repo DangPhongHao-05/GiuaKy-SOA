@@ -1,0 +1,6 @@
+@GiangVienService_HostAddress = http://localhost:5093
+
+GET {{GiangVienService_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
