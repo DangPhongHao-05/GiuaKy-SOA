@@ -8,6 +8,17 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("Supabase")));
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowReactApp",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:5173") // Cho phép React gọi vào
+                  .AllowAnyHeader()                     // Cho phép mọi Header (Authorization, Content-Type...)
+                  .AllowAnyMethod();                    // Cho phép mọi Method (GET, POST, PUT, DELETE...)
+        });
+});
+
 builder.Services.AddControllers();
 
 // Add services to the container.
@@ -25,6 +36,8 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
+
+app.UseCors("AllowReactApp");
 
 app.UseHttpsRedirection();
 app.MapControllers();

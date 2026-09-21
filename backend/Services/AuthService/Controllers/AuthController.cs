@@ -21,6 +21,10 @@ namespace AuthService.Controllers
             try
             {
                 var register = await _authService.RegisterAsync(request);
+                if (!register.Success)
+                {
+                    return BadRequest(register); 
+                }
                 return Ok(register);
             } catch (Exception ex)
             {
@@ -34,6 +38,10 @@ namespace AuthService.Controllers
             try
             {
                 var login = await _authService.LoginAsync(request);
+                if (!login.Success)
+                {
+                    return BadRequest(login);
+                }
                 return Ok(login);
             } catch(Exception ex)
             {
@@ -47,6 +55,10 @@ namespace AuthService.Controllers
             try
             {
                 var verify = await _authService.VerifyAsync(request);
+                if (!verify.Success)
+                {
+                    return BadRequest(verify);
+                }
                 return Ok(verify);
             } catch (Exception ex)
             {
