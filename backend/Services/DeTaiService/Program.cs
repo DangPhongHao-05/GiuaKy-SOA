@@ -13,6 +13,18 @@ builder.Services.AddDbContext<DeTaiDbContext>(options =>
 // 2. Đăng ký dịch vụ Controllers
 builder.Services.AddControllers();
 
+// Cấu hình CORS cho phép React frontend kết nối
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowReactApp",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:5173")
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        });
+});
+
 var app = builder.Build();
 
 // ĐÃ TẮT SWAGGER theo yêu cầu (comment lại)
@@ -22,6 +34,7 @@ var app = builder.Build();
 //     app.UseSwaggerUI();
 // }
 
+app.UseCors("AllowReactApp");
 app.UseHttpsRedirection();
 app.UseAuthorization();
 
