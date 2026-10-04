@@ -122,7 +122,7 @@ export const DangKyPage: React.FC = () => {
             ),
         },
         {
-            header: 'Sinh viên đăng ký (SinhVienService :5005)',
+            header: 'Sinh viên đăng ký (SinhVienService :7005)',
             key: 'maSV',
             render: (item) => {
                 const sv = sinhViens.find((s) => s.maSV === item.maSV);
@@ -141,7 +141,7 @@ export const DangKyPage: React.FC = () => {
             },
         },
         {
-            header: 'Đề tài lựa chọn (DeTaiService :5003)',
+            header: 'Đề tài lựa chọn (DeTaiService :7003)',
             key: 'maDeTai',
             className: 'max-w-[320px]',
             render: (item) => {
@@ -214,7 +214,7 @@ export const DangKyPage: React.FC = () => {
                     </h4>
                 </div>
                 <p className="text-xs text-gray-600 leading-relaxed">
-                    Trang Đăng Ký này đồng thời giao tiếp với <strong>SinhVienService</strong> (cổng 5005) để đối chiếu thông tin người học, <strong>DeTaiService</strong> (cổng 5003) để kiểm tra danh mục đề tài, và ghi dữ liệu phê duyệt tại <strong>DangKyService</strong> (cổng 5002) hoàn toàn qua giao thức <strong>HTTP/REST</strong>.
+                    Trang Đăng Ký này đồng thời giao tiếp với <strong>SinhVienService</strong> (cổng 7005) để đối chiếu thông tin người học, <strong>DeTaiService</strong> (cổng 7003) để kiểm tra danh mục đề tài, và ghi dữ liệu phê duyệt tại <strong>DangKyService</strong> (cổng 7002) hoàn toàn qua giao thức <strong>HTTP/REST</strong>.
                 </p>
             </div>
 
@@ -227,7 +227,7 @@ export const DangKyPage: React.FC = () => {
 
             <DataTable<DangKy>
                 title="Quản lý Đăng ký Đề tài Tốt nghiệp"
-                description="Hồ sơ đăng ký đồ án của sinh viên được quản lý độc lập tại DangKyService (:5002)"
+                description="Hồ sơ đăng ký đồ án của sinh viên được quản lý độc lập tại DangKyService (:7002)"
                 columns={columns}
                 data={dangKys}
                 idKey="id"
@@ -255,7 +255,7 @@ export const DangKyPage: React.FC = () => {
 
                     <div>
                         <label className="block text-xs font-semibold text-gray-700 mb-1">
-                            Chọn Sinh viên (từ SinhVienService :5005) <span className="text-red-500">*</span>
+                            Chọn Sinh viên (từ SinhVienService :7005) <span className="text-red-500">*</span>
                         </label>
                         <select
                             required
@@ -274,7 +274,7 @@ export const DangKyPage: React.FC = () => {
 
                     <div>
                         <label className="block text-xs font-semibold text-gray-700 mb-1">
-                            Chọn Đề tài (từ DeTaiService :5003) <span className="text-red-500">*</span>
+                            Chọn Đề tài (từ DeTaiService :7003) <span className="text-red-500">*</span>
                         </label>
                         <select
                             required

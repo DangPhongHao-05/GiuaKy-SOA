@@ -66,9 +66,9 @@ export const giangVienApi = {
             apiLogger.addMockCall({
                 serviceName: 'GiangVienService',
                 method: 'GET',
-                url: 'http://localhost:5004/api/GiangVien',
+                url: 'https://localhost:7004/api/GiangVien',
                 responseBody: fallback,
-                note: 'GiangVienService (:5004) chưa có logic backend -> Dùng Mock GiangVien',
+                note: 'GiangVienService (:7004) chưa có logic backend -> Dùng Mock GiangVien',
             });
             return { data: fallback, isLive: false };
         }
@@ -102,7 +102,7 @@ export const giangVienApi = {
             apiLogger.addMockCall({
                 serviceName: 'GiangVienService',
                 method: 'POST',
-                url: 'http://localhost:5004/api/GiangVien',
+                url: 'https://localhost:7004/api/GiangVien',
                 requestBody: dto,
                 responseBody: dto,
                 note: 'Tạo giảng viên mới trong bộ nhớ Mock cục bộ',
@@ -126,7 +126,7 @@ export const giangVienApi = {
                 apiLogger.addMockCall({
                     serviceName: 'GiangVienService',
                     method: 'PUT',
-                    url: `http://localhost:5004/api/GiangVien/${maGV}`,
+                    url: `https://localhost:7004/api/GiangVien/${maGV}`,
                     requestBody: dto,
                     responseBody: items[idx],
                     note: 'Cập nhật giảng viên trong bộ nhớ Mock cục bộ',
@@ -149,7 +149,7 @@ export const giangVienApi = {
             apiLogger.addMockCall({
                 serviceName: 'GiangVienService',
                 method: 'DELETE',
-                url: `http://localhost:5004/api/GiangVien/${maGV}`,
+                url: `https://localhost:7004/api/GiangVien/${maGV}`,
                 responseBody: { message: 'Đã xóa giảng viên' },
                 note: 'Xóa giảng viên trong bộ nhớ Mock cục bộ',
             });

@@ -8,10 +8,10 @@ export const MainLayout: React.FC = () => {
     const location = useLocation();
 
     const getPageTitle = (pathname: string) => {
-        if (pathname.includes('/de-tai')) return 'Quản lý Đề tài (DeTaiService :5003)';
-        if (pathname.includes('/sinh-vien')) return 'Quản lý Sinh viên (SinhVienService :5005)';
-        if (pathname.includes('/giang-vien')) return 'Hội đồng Giảng viên (GiangVienService :5004)';
-        if (pathname.includes('/dang-ky')) return 'Quản lý Đăng ký Đồ án (DangKyService :5002)';
+        if (pathname.includes('/de-tai')) return 'Quản lý Đề tài (DeTaiService :7003)';
+        if (pathname.includes('/sinh-vien')) return 'Quản lý Sinh viên (SinhVienService :7005)';
+        if (pathname.includes('/giang-vien')) return 'Hội đồng Giảng viên (GiangVienService :7004)';
+        if (pathname.includes('/dang-ky')) return 'Quản lý Đăng ký Đồ án (DangKyService :7002)';
         return 'Tổng quan Kiến trúc Hướng Dịch vụ (SOA)';
     };
 

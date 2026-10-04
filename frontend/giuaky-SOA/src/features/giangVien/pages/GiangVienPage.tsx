@@ -140,7 +140,7 @@ export const GiangVienPage: React.FC = () => {
 
             <DataTable<GiangVien>
                 title="Hội đồng & Giảng viên Hướng dẫn"
-                description="Dữ liệu do GiangVienService (:5004) quản lý độc lập"
+                description="Dữ liệu do GiangVienService (:7004) quản lý độc lập"
                 columns={columns}
                 data={giangViens}
                 idKey="maGV"

@@ -58,9 +58,9 @@ export const deTaiApi = {
             apiLogger.addMockCall({
                 serviceName: 'DeTaiService',
                 method: 'GET',
-                url: 'http://localhost:5003/api/DeTai',
+                url: 'https://localhost:7003/api/DeTai',
                 responseBody: fallback,
-                note: 'Không kết nối được cổng 5003 -> Dùng Mock DeTai',
+                note: 'Không kết nối được cổng 7003 -> Dùng Mock DeTai',
             });
             return { data: fallback, isLive: false };
         }
@@ -93,7 +93,7 @@ export const deTaiApi = {
             apiLogger.addMockCall({
                 serviceName: 'DeTaiService',
                 method: 'POST',
-                url: 'http://localhost:5003/api/DeTai',
+                url: 'https://localhost:7003/api/DeTai',
                 requestBody: dto,
                 responseBody: newItem,
                 note: 'Tạo đề tài trong bộ nhớ Mock cục bộ',
@@ -117,7 +117,7 @@ export const deTaiApi = {
                 apiLogger.addMockCall({
                     serviceName: 'DeTaiService',
                     method: 'PUT',
-                    url: `http://localhost:5003/api/DeTai/${id}`,
+                    url: `https://localhost:7003/api/DeTai/${id}`,
                     requestBody: dto,
                     responseBody: items[idx],
                     note: 'Cập nhật đề tài trong bộ nhớ Mock cục bộ',
@@ -140,7 +140,7 @@ export const deTaiApi = {
             apiLogger.addMockCall({
                 serviceName: 'DeTaiService',
                 method: 'DELETE',
-                url: `http://localhost:5003/api/DeTai/${id}`,
+                url: `https://localhost:7003/api/DeTai/${id}`,
                 responseBody: { message: 'Đã xóa đề tài thành công!' },
                 note: 'Xóa đề tài trong bộ nhớ Mock cục bộ',
             });

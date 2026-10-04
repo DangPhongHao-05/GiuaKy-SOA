@@ -124,7 +124,7 @@ export const DashboardHome: React.FC = () => {
                 >
                     <div className="flex items-center justify-between">
                         <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">
-                            Đề tài (:5003)
+                            Đề tài (:7003)
                         </span>
                         <span className="text-base p-2 bg-orange-50 rounded-xl group-hover:scale-110 transition">
                             📚
@@ -152,7 +152,7 @@ export const DashboardHome: React.FC = () => {
                 >
                     <div className="flex items-center justify-between">
                         <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">
-                            Sinh viên (:5005)
+                            Sinh viên (:7005)
                         </span>
                         <span className="text-base p-2 bg-emerald-50 rounded-xl group-hover:scale-110 transition">
                             🎓
@@ -180,7 +180,7 @@ export const DashboardHome: React.FC = () => {
                 >
                     <div className="flex items-center justify-between">
                         <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">
-                            Giảng viên (:5004)
+                            Giảng viên (:7004)
                         </span>
                         <span className="text-base p-2 bg-purple-50 rounded-xl group-hover:scale-110 transition">
                             👨‍🏫
@@ -208,7 +208,7 @@ export const DashboardHome: React.FC = () => {
                 >
                     <div className="flex items-center justify-between">
                         <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">
-                            Đăng ký (:5002)
+                            Đăng ký (:7002)
                         </span>
                         <span className="text-base p-2 bg-rose-50 rounded-xl group-hover:scale-110 transition">
                             📝

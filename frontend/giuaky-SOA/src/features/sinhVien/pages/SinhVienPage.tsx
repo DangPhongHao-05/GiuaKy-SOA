@@ -136,7 +136,7 @@ export const SinhVienPage: React.FC = () => {
 
             <DataTable<SinhVien>
                 title="Danh sách Sinh viên tốt nghiệp"
-                description="Dữ liệu do SinhVienService (:5005) phụ trách quản trị độc lập"
+                description="Dữ liệu do SinhVienService (:7005) phụ trách quản trị độc lập"
                 columns={columns}
                 data={sinhViens}
                 idKey="maSV"

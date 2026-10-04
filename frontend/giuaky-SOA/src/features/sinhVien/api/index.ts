@@ -73,9 +73,9 @@ export const sinhVienApi = {
             apiLogger.addMockCall({
                 serviceName: 'SinhVienService',
                 method: 'GET',
-                url: 'http://localhost:5005/api/SinhVien',
+                url: 'https://localhost:7005/api/SinhVien',
                 responseBody: fallback,
-                note: 'SinhVienService (:5005) chưa có logic backend -> Dùng Mock SinhVien',
+                note: 'SinhVienService (:7005) chưa có logic backend -> Dùng Mock SinhVien',
             });
             return { data: fallback, isLive: false };
         }
@@ -109,7 +109,7 @@ export const sinhVienApi = {
             apiLogger.addMockCall({
                 serviceName: 'SinhVienService',
                 method: 'POST',
-                url: 'http://localhost:5005/api/SinhVien',
+                url: 'https://localhost:7005/api/SinhVien',
                 requestBody: dto,
                 responseBody: dto,
                 note: 'Tạo sinh viên mới trong bộ nhớ Mock cục bộ',
@@ -133,7 +133,7 @@ export const sinhVienApi = {
                 apiLogger.addMockCall({
                     serviceName: 'SinhVienService',
                     method: 'PUT',
-                    url: `http://localhost:5005/api/SinhVien/${maSV}`,
+                    url: `https://localhost:7005/api/SinhVien/${maSV}`,
                     requestBody: dto,
                     responseBody: items[idx],
                     note: 'Cập nhật sinh viên trong bộ nhớ Mock cục bộ',
@@ -156,7 +156,7 @@ export const sinhVienApi = {
             apiLogger.addMockCall({
                 serviceName: 'SinhVienService',
                 method: 'DELETE',
-                url: `http://localhost:5005/api/SinhVien/${maSV}`,
+                url: `https://localhost:7005/api/SinhVien/${maSV}`,
                 responseBody: { message: 'Đã xóa sinh viên' },
                 note: 'Xóa sinh viên trong bộ nhớ Mock cục bộ',
             });

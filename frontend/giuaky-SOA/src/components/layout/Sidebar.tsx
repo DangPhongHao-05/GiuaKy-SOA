@@ -29,7 +29,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onCloseMobile }) => {
             label: 'Quản lý Đề tài',
             icon: '📚',
             serviceKey: 'deTai',
-            badge: ':5003',
+            badge: ':7003',
             badgeColor: 'bg-orange-100 text-orange-700',
         },
         {
@@ -37,7 +37,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onCloseMobile }) => {
             label: 'Quản lý Sinh viên',
             icon: '🎓',
             serviceKey: 'sinhVien',
-            badge: ':5005',
+            badge: ':7005',
             badgeColor: 'bg-emerald-100 text-emerald-700',
         },
         {
@@ -45,7 +45,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onCloseMobile }) => {
             label: 'Hội đồng Giảng viên',
             icon: '👨‍🏫',
             serviceKey: 'giangVien',
-            badge: ':5004',
+            badge: ':7004',
             badgeColor: 'bg-purple-100 text-purple-700',
         },
         {
@@ -53,7 +53,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onCloseMobile }) => {
             label: 'Đăng ký Đồ án',
             icon: '📝',
             serviceKey: 'dangKy',
-            badge: ':5002',
+            badge: ':7002',
             badgeColor: 'bg-rose-100 text-rose-700',
         },
     ];

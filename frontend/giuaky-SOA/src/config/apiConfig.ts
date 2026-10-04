@@ -35,7 +35,7 @@ export const DEFAULT_SERVICE_CONFIG: Record<string, ServiceEndpointConfig> = {
         key: 'sinhVien',
         name: 'SinhVienService',
         displayName: 'Dịch vụ Quản lý Sinh viên',
-        baseURL: 'http://localhost:5005/api',
+        baseURL: 'https://localhost:7005/api',
         endpoints: {
             getAll: '/SinhVien',
             getById: '/SinhVien/:id',
@@ -43,16 +43,16 @@ export const DEFAULT_SERVICE_CONFIG: Record<string, ServiceEndpointConfig> = {
             update: '/SinhVien/:id',
             delete: '/SinhVien/:id',
         },
-        port: 5005,
+        port: 7005,
         color: '#16a34a', // green
         description: 'Quản lý danh sách sinh viên, thông tin lớp, khoa và niên khóa',
-        isImplemented: false,
+        isImplemented: true,
     },
     giangVien: {
         key: 'giangVien',
         name: 'GiangVienService',
         displayName: 'Dịch vụ Quản lý Giảng viên',
-        baseURL: 'http://localhost:5004/api',
+        baseURL: 'https://localhost:7004/api',
         endpoints: {
             getAll: '/GiangVien',
             getById: '/GiangVien/:id',
@@ -60,7 +60,7 @@ export const DEFAULT_SERVICE_CONFIG: Record<string, ServiceEndpointConfig> = {
             update: '/GiangVien/:id',
             delete: '/GiangVien/:id',
         },
-        port: 5004,
+        port: 7004,
         color: '#9333ea', // purple
         description: 'Quản lý thông tin giảng viên hướng dẫn, bộ môn và học vị',
         isImplemented: false,
@@ -69,7 +69,7 @@ export const DEFAULT_SERVICE_CONFIG: Record<string, ServiceEndpointConfig> = {
         key: 'deTai',
         name: 'DeTaiService',
         displayName: 'Dịch vụ Quản lý Đề tài',
-        baseURL: 'http://localhost:5003/api',
+        baseURL: 'https://localhost:7003/api',
         endpoints: {
             getAll: '/DeTai',
             getById: '/DeTai/:id',
@@ -77,7 +77,7 @@ export const DEFAULT_SERVICE_CONFIG: Record<string, ServiceEndpointConfig> = {
             update: '/DeTai/:id',
             delete: '/DeTai/:id',
         },
-        port: 5003,
+        port: 7003,
         color: '#ea580c', // orange
         description: 'Quản lý danh mục đề tài tốt nghiệp, tên đề tài và mô tả chi tiết',
         isImplemented: true,
@@ -86,7 +86,7 @@ export const DEFAULT_SERVICE_CONFIG: Record<string, ServiceEndpointConfig> = {
         key: 'dangKy',
         name: 'DangKyService',
         displayName: 'Dịch vụ Quản lý Đăng ký Đồ án',
-        baseURL: 'http://localhost:5002/api',
+        baseURL: 'https://localhost:7002/api',
         endpoints: {
             getAll: '/DangKy',
             getById: '/DangKy/:id',
@@ -94,7 +94,7 @@ export const DEFAULT_SERVICE_CONFIG: Record<string, ServiceEndpointConfig> = {
             update: '/DangKy/:id',
             delete: '/DangKy/:id',
         },
-        port: 5002,
+        port: 7002,
         color: '#dc2626', // red
         description: 'Kết nối Sinh viên và Đề tài, quản lý quy trình xét duyệt đăng ký',
         isImplemented: false,

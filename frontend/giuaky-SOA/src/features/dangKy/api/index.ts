@@ -70,9 +70,9 @@ export const dangKyApi = {
             apiLogger.addMockCall({
                 serviceName: 'DangKyService',
                 method: 'GET',
-                url: 'http://localhost:5002/api/DangKy',
+                url: 'https://localhost:7002/api/DangKy',
                 responseBody: fallback,
-                note: 'DangKyService (:5002) chưa có logic backend -> Dùng Mock DangKy',
+                note: 'DangKyService (:7002) chưa có logic backend -> Dùng Mock DangKy',
             });
             return { data: fallback, isLive: false };
         }
@@ -112,7 +112,7 @@ export const dangKyApi = {
             apiLogger.addMockCall({
                 serviceName: 'DangKyService',
                 method: 'POST',
-                url: 'http://localhost:5002/api/DangKy',
+                url: 'https://localhost:7002/api/DangKy',
                 requestBody: dto,
                 responseBody: newItem,
                 note: 'Tạo phiếu đăng ký đề tài trong bộ nhớ Mock cục bộ',
@@ -140,7 +140,7 @@ export const dangKyApi = {
                 apiLogger.addMockCall({
                     serviceName: 'DangKyService',
                     method: 'PUT',
-                    url: `http://localhost:5002/api/DangKy/${id}`,
+                    url: `https://localhost:7002/api/DangKy/${id}`,
                     requestBody: dto,
                     responseBody: items[idx],
                     note: 'Cập nhật phiếu đăng ký trong bộ nhớ Mock cục bộ',
@@ -163,7 +163,7 @@ export const dangKyApi = {
             apiLogger.addMockCall({
                 serviceName: 'DangKyService',
                 method: 'DELETE',
-                url: `http://localhost:5002/api/DangKy/${id}`,
+                url: `https://localhost:7002/api/DangKy/${id}`,
                 responseBody: { message: 'Đã hủy đơn đăng ký' },
                 note: 'Xóa phiếu đăng ký trong bộ nhớ Mock cục bộ',
             });
