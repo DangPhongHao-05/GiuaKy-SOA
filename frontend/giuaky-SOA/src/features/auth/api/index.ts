@@ -1,24 +1,49 @@
-import axiosClient from "../../../services/axiosClient";
-import type { LoginPayload, RegisterPayload } from "../types";
+import { authClient } from "../../../services/apiClients";
+import { getServiceConfig } from "../../../config/apiConfig";
+import type {
+    AuthResponse,
+    LoginPayload,
+    RegisterPayload,
+    TokenResponse,
+    VerifyOtpPayload,
+} from "../types";
+
+const getEndpoints = () => {
+    const config = getServiceConfig("auth");
+    return {
+        login: config.endpoints.login || "/Auth/login",
+        register: config.endpoints.register || "/Auth/register",
+        verifyOtp: config.endpoints.verifyOtp || "/Auth/verify-otp",
+    };
+};
 
 export const authApi = {
-  // 1. API gửi yêu cầu đăng nhập
-  login: async (payload: LoginPayload) => {
-    const response = await axiosClient.post("/auth/login", payload);
-    return response.data;
-  },
+    // 1. API gửi yêu cầu đăng nhập (Server kiểm tra mật khẩu và gửi OTP qua email)
+    login: async (payload: LoginPayload): Promise<AuthResponse> => {
+        const endpoints = getEndpoints();
+        const response = await authClient.post<AuthResponse>(endpoints.login, payload);
+        return response.data;
+    },
 
-  // 2. API xác thực mã OTP do người dùng nhập
-  verifyOtp: async (email: string, otp: string) => {
-    const response = await axiosClient.post("/auth/verify-otp", {
-      email: email,
-      otpCode: otp,
-    });
-    return response.data;
-  },
+    // 2. API xác thực mã OTP người dùng nhập để lấy JWT Token
+    verifyOtp: async (
+        emailOrPayload: string | VerifyOtpPayload,
+        otp?: string
+    ): Promise<TokenResponse> => {
+        const endpoints = getEndpoints();
+        const payload: VerifyOtpPayload =
+            typeof emailOrPayload === "string"
+                ? { email: emailOrPayload, otpCode: otp || "" }
+                : emailOrPayload;
 
-  register: async (payload: RegisterPayload) => {
-    const response = await axiosClient.post('/auth/register', payload);
-    return response.data;
-  },
+        const response = await authClient.post<TokenResponse>(endpoints.verifyOtp, payload);
+        return response.data;
+    },
+
+    // 3. API đăng ký tài khoản mới
+    register: async (payload: RegisterPayload): Promise<AuthResponse> => {
+        const endpoints = getEndpoints();
+        const response = await authClient.post<AuthResponse>(endpoints.register, payload);
+        return response.data;
+    },
 };
