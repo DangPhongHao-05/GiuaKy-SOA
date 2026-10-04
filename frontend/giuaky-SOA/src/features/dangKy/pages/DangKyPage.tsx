@@ -58,7 +58,7 @@ export const DangKyPage: React.FC = () => {
     };
 
     const handleDelete = async (item: DangKy) => {
-        if (window.confirm(`Bạn có chắc muốn hủy phiếu đăng ký #${item.id} của SV ${item.maSV}?`)) {
+        if (window.confirm(`Xác nhận hủy phiếu đăng ký #${item.id} của SV ${item.maSV}?`)) {
             try {
                 await deleteDangKy(item.id);
             } catch (err: any) {
@@ -99,14 +99,14 @@ export const DangKyPage: React.FC = () => {
         }
     };
 
-    const getStatusStyle = (status: TrangThaiDangKy) => {
+    const getStatusBadge = (status: TrangThaiDangKy) => {
         switch (status) {
             case 'Đã duyệt':
-                return 'bg-emerald-50 text-emerald-700 border-emerald-200';
+                return 'bg-emerald-50 text-emerald-800 border-emerald-400 font-bold';
             case 'Từ chối':
-                return 'bg-rose-50 text-rose-700 border-rose-200';
+                return 'bg-rose-50 text-rose-800 border-rose-400 font-bold';
             default:
-                return 'bg-amber-50 text-amber-700 border-amber-200';
+                return 'bg-amber-50 text-amber-800 border-amber-400 font-bold';
         }
     };
 
@@ -114,43 +114,35 @@ export const DangKyPage: React.FC = () => {
         {
             header: 'Mã số',
             key: 'id',
-            className: 'w-20',
-            render: (item) => (
-                <span className="font-mono font-bold text-xs bg-red-50 text-red-700 px-2 py-0.5 rounded">
-                    #{item.id}
-                </span>
-            ),
+            className: 'w-20 font-mono font-bold text-gray-900',
+            render: (item) => <span>#{item.id}</span>,
         },
         {
-            header: 'Sinh viên đăng ký (SinhVienService :7005)',
+            header: 'Sinh viên (SinhVien :7005)',
             key: 'maSV',
             render: (item) => {
                 const sv = sinhViens.find((s) => s.maSV === item.maSV);
                 return (
                     <div>
-                        <span className="font-mono font-semibold text-xs text-gray-900">
-                            {item.maSV}
-                        </span>
+                        <span className="font-mono font-bold text-gray-900">{item.maSV}</span>
                         {sv && (
-                            <span className="ml-2 text-xs text-gray-600 font-medium">
-                                - {sv.hoTen}
-                            </span>
+                            <span className="ml-2 text-gray-700">({sv.hoTen})</span>
                         )}
                     </div>
                 );
             },
         },
         {
-            header: 'Đề tài lựa chọn (DeTaiService :7003)',
+            header: 'Đề tài đăng ký (DeTai :7003)',
             key: 'maDeTai',
             className: 'max-w-[320px]',
             render: (item) => {
                 const dt = deTais.find((d) => d.id === item.maDeTai);
                 return (
                     <div>
-                        <p className="text-xs font-semibold text-gray-800 line-clamp-1">
+                        <span className="font-medium text-gray-900 line-clamp-1">
                             {dt ? dt.tenDeTai : `Đề tài #${item.maDeTai}`}
-                        </p>
+                        </span>
                     </div>
                 );
             },
@@ -158,35 +150,37 @@ export const DangKyPage: React.FC = () => {
         {
             header: 'Ngày nộp',
             key: 'ngayDangKy',
-            className: 'text-xs text-gray-500 font-mono',
+            className: 'text-xs text-gray-600 font-mono w-28',
         },
         {
             header: 'Trạng thái duyệt',
             key: 'trangThai',
             render: (item) => (
-                <div className="flex items-center gap-1.5">
+                <div className="flex items-center gap-2">
                     <span
-                        className={`text-xs px-2.5 py-0.5 rounded-full font-semibold border ${getStatusStyle(
+                        className={`text-[11px] px-2 py-0.5 border font-mono ${getStatusBadge(
                             item.trangThai
                         )}`}
                     >
-                        {item.trangThai}
+                        [{item.trangThai.toUpperCase()}]
                     </span>
                     {item.trangThai === 'Chờ duyệt' && (
-                        <div className="flex items-center gap-1 ml-1">
+                        <div className="flex items-center gap-1 font-mono text-[11px]">
                             <button
+                                type="button"
                                 onClick={() => handleQuickStatusChange(item, 'Đã duyệt')}
-                                className="text-[11px] px-1.5 py-0.5 bg-emerald-100 text-emerald-800 hover:bg-emerald-200 rounded font-medium transition"
-                                title="Phê duyệt nhanh"
+                                className="px-1.5 py-0.5 border border-emerald-500 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 cursor-pointer"
+                                title="Phê duyệt phiếu"
                             >
-                                ✓ Duyệt
+                                [Duyệt]
                             </button>
                             <button
+                                type="button"
                                 onClick={() => handleQuickStatusChange(item, 'Từ chối')}
-                                className="text-[11px] px-1.5 py-0.5 bg-rose-100 text-rose-800 hover:bg-rose-200 rounded font-medium transition"
-                                title="Từ chối nhanh"
+                                className="px-1.5 py-0.5 border border-rose-400 bg-rose-50 hover:bg-rose-100 text-rose-800 cursor-pointer"
+                                title="Từ chối phiếu"
                             >
-                                ✕
+                                [Từ chối]
                             </button>
                         </div>
                     )}
@@ -196,38 +190,41 @@ export const DangKyPage: React.FC = () => {
         {
             header: 'Ghi chú',
             key: 'ghiChu',
-            className: 'text-xs text-gray-500 max-w-[200px]',
-            render: (item) => <span className="line-clamp-1">{item.ghiChu || '-'}</span>,
+            className: 'text-gray-500 max-w-[200px] text-xs',
+            render: (item) => <span>{item.ghiChu || '-'}</span>,
         },
     ];
 
     return (
-        <div className="space-y-6">
-            <ServiceBadge serviceKey="dangKy" isLive={isLive} />
+        <div className="space-y-3">
+            <ServiceBadge serviceKey="dangKy" isLive={isLive} onRefresh={fetchAllData} />
 
-            {/* SOA Integration Highlight Banner */}
-            <div className="p-4 bg-linear-to-r from-blue-50 via-purple-50 to-orange-50 rounded-2xl border border-blue-100/80 shadow-xs">
-                <div className="flex items-center gap-2.5 mb-1.5">
-                    <span className="text-base">🔄</span>
-                    <h4 className="text-xs font-bold text-gray-900 uppercase tracking-wider">
-                        Đặc trưng SOA: Phối hợp đa dịch vụ (Multi-Service Orchestration)
-                    </h4>
+            {/* SOA Integration Spec Note */}
+            <div className="p-2.5 border border-gray-300 bg-white font-mono text-xs">
+                <div className="font-bold text-gray-800 mb-0.5">
+                    [SOA ORCHESTRATION: PHỐI HỢP ĐA DỊCH VỤ]
                 </div>
-                <p className="text-xs text-gray-600 leading-relaxed">
-                    Trang Đăng Ký này đồng thời giao tiếp với <strong>SinhVienService</strong> (cổng 7005) để đối chiếu thông tin người học, <strong>DeTaiService</strong> (cổng 7003) để kiểm tra danh mục đề tài, và ghi dữ liệu phê duyệt tại <strong>DangKyService</strong> (cổng 7002) hoàn toàn qua giao thức <strong>HTTP/REST</strong>.
-                </p>
+                <div className="text-gray-600 font-sans text-xs">
+                    Trang này phối hợp dữ liệu từ <strong>SinhVienService (:7005)</strong>, <strong>DeTaiService (:7003)</strong> và lưu trữ kết quả phê duyệt tại <strong>DangKyService (:7002)</strong> qua REST API.
+                </div>
             </div>
 
             {error && (
-                <div className="p-3 bg-red-50 text-red-700 border border-red-200 rounded-xl text-xs flex items-center justify-between">
-                    <span>⚠️ {error}</span>
-                    <button onClick={fetchAllData} className="underline font-bold">Thử lại</button>
+                <div className="p-2 border border-rose-400 bg-rose-50 text-rose-800 text-xs font-mono flex items-center justify-between">
+                    <span>[LỖI]: {error}</span>
+                    <button
+                        type="button"
+                        onClick={fetchAllData}
+                        className="px-2 py-0.5 border border-rose-300 bg-white hover:bg-rose-100 text-rose-800 cursor-pointer"
+                    >
+                        [Thử lại]
+                    </button>
                 </div>
             )}
 
             <DataTable<DangKy>
-                title="Quản lý Đăng ký Đề tài Tốt nghiệp"
-                description="Hồ sơ đăng ký đồ án của sinh viên được quản lý độc lập tại DangKyService (:7002)"
+                title="DANH SÁCH ĐĂNG KÝ ĐỒ ÁN TỐT NGHIỆP"
+                description="Quản lý bởi DangKyService (:7002) - Phối hợp liên dịch vụ"
                 columns={columns}
                 data={dangKys}
                 idKey="id"
@@ -236,32 +233,33 @@ export const DangKyPage: React.FC = () => {
                 onEdit={handleOpenEdit}
                 onDelete={handleDelete}
                 onRefresh={fetchAllData}
-                searchPlaceholder="Tìm theo Mã SV, trạng thái hoặc ghi chú..."
+                searchPlaceholder="Mã SV, trạng thái hoặc ghi chú..."
                 searchKeys={['maSV', 'trangThai', 'ghiChu']}
             />
 
-            {/* Modal */}
+            {/* Modal Wireframe */}
             <Modal
                 isOpen={isModalOpen}
-                title={editingItem ? `Cập nhật phiếu đăng ký #${editingItem.id}` : 'Tạo phiếu đăng ký đồ án mới'}
+                title={editingItem ? `[CẬP NHẬT PHIẾU ĐĂNG KÝ: #${editingItem.id}]` : '[TẠO PHIẾU ĐĂNG KÝ MỚI]'}
                 onClose={() => setIsModalOpen(false)}
             >
-                <form onSubmit={handleSubmit} className="space-y-4">
+                <form onSubmit={handleSubmit} className="space-y-3 text-xs font-mono">
                     {formError && (
-                        <div className="p-3 bg-red-50 text-red-600 rounded-lg text-xs border border-red-200">
-                            {formError}
+                        <div className="p-2 border border-rose-300 bg-rose-50 text-rose-700 text-xs">
+                            [LỖI]: {formError}
                         </div>
                     )}
 
                     <div>
-                        <label className="block text-xs font-semibold text-gray-700 mb-1">
-                            Chọn Sinh viên (từ SinhVienService :7005) <span className="text-red-500">*</span>
+                        <label className="block font-bold text-gray-700 mb-1">
+                            Sinh viên đăng ký (SinhVienService :7005) *
                         </label>
                         <select
                             required
+                            disabled={!!editingItem}
                             value={formData.maSV}
                             onChange={(e) => setFormData({ ...formData, maSV: e.target.value })}
-                            className="w-full px-3.5 py-2 border border-gray-300 rounded-lg text-xs focus:ring-2 focus:ring-red-500/20 focus:border-red-500 focus:outline-none transition"
+                            className="w-full px-2.5 py-1.5 border border-gray-300 bg-white text-xs font-mono focus:outline-none disabled:bg-gray-100"
                         >
                             <option value="">-- Chọn sinh viên --</option>
                             {sinhViens.map((sv) => (
@@ -273,16 +271,16 @@ export const DangKyPage: React.FC = () => {
                     </div>
 
                     <div>
-                        <label className="block text-xs font-semibold text-gray-700 mb-1">
-                            Chọn Đề tài (từ DeTaiService :7003) <span className="text-red-500">*</span>
+                        <label className="block font-bold text-gray-700 mb-1">
+                            Đề tài đăng ký (DeTaiService :7003) *
                         </label>
                         <select
                             required
                             value={formData.maDeTai}
                             onChange={(e) => setFormData({ ...formData, maDeTai: Number(e.target.value) })}
-                            className="w-full px-3.5 py-2 border border-gray-300 rounded-lg text-xs focus:ring-2 focus:ring-red-500/20 focus:border-red-500 focus:outline-none transition"
+                            className="w-full px-2.5 py-1.5 border border-gray-300 bg-white text-xs focus:outline-none"
                         >
-                            <option value="0">-- Chọn đề tài --</option>
+                            <option value={0}>-- Chọn đề tài --</option>
                             {deTais.map((dt) => (
                                 <option key={dt.id} value={dt.id}>
                                     #{dt.id} - {dt.tenDeTai}
@@ -291,27 +289,30 @@ export const DangKyPage: React.FC = () => {
                         </select>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-2 gap-2">
                         <div>
-                            <label className="block text-xs font-semibold text-gray-700 mb-1">
+                            <label className="block font-bold text-gray-700 mb-1">
                                 Ngày đăng ký
                             </label>
                             <input
                                 type="date"
+                                required
                                 value={formData.ngayDangKy}
                                 onChange={(e) => setFormData({ ...formData, ngayDangKy: e.target.value })}
-                                className="w-full px-3.5 py-2 border border-gray-300 rounded-lg text-xs font-mono focus:ring-2 focus:ring-red-500/20 focus:border-red-500 focus:outline-none transition"
+                                className="w-full px-2.5 py-1.5 border border-gray-300 bg-white text-xs font-mono focus:outline-none"
                             />
                         </div>
 
                         <div>
-                            <label className="block text-xs font-semibold text-gray-700 mb-1">
-                                Trạng thái duyệt
+                            <label className="block font-bold text-gray-700 mb-1">
+                                Trạng thái phê duyệt
                             </label>
                             <select
                                 value={formData.trangThai}
-                                onChange={(e) => setFormData({ ...formData, trangThai: e.target.value as TrangThaiDangKy })}
-                                className="w-full px-3.5 py-2 border border-gray-300 rounded-lg text-xs focus:ring-2 focus:ring-red-500/20 focus:border-red-500 focus:outline-none transition"
+                                onChange={(e) =>
+                                    setFormData({ ...formData, trangThai: e.target.value as TrangThaiDangKy })
+                                }
+                                className="w-full px-2.5 py-1.5 border border-gray-300 bg-white text-xs font-mono focus:outline-none"
                             >
                                 <option value="Chờ duyệt">Chờ duyệt</option>
                                 <option value="Đã duyệt">Đã duyệt</option>
@@ -321,32 +322,32 @@ export const DangKyPage: React.FC = () => {
                     </div>
 
                     <div>
-                        <label className="block text-xs font-semibold text-gray-700 mb-1">
-                            Ghi chú / Nhận xét của hội đồng
+                        <label className="block font-bold text-gray-700 mb-1">
+                            Ghi chú xét duyệt
                         </label>
                         <textarea
                             rows={3}
-                            placeholder="Ghi chú điều kiện hoặc lý do duyệt / từ chối..."
-                            value={formData.ghiChu || ''}
+                            placeholder="Ghi chú kết quả xét duyệt hoặc lý do từ chối..."
+                            value={formData.ghiChu}
                             onChange={(e) => setFormData({ ...formData, ghiChu: e.target.value })}
-                            className="w-full px-3.5 py-2 border border-gray-300 rounded-lg text-xs focus:ring-2 focus:ring-red-500/20 focus:border-red-500 focus:outline-none transition"
+                            className="w-full px-2.5 py-1.5 border border-gray-300 bg-white text-xs focus:outline-none font-sans"
                         />
                     </div>
 
-                    <div className="flex items-center justify-end gap-2 pt-3 border-t border-gray-100">
+                    <div className="flex items-center justify-end gap-2 pt-2 border-t border-gray-200">
                         <button
                             type="button"
                             onClick={() => setIsModalOpen(false)}
-                            className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg text-xs font-medium hover:bg-gray-50 transition"
+                            className="px-3 py-1.5 border border-gray-300 bg-white hover:bg-gray-100 text-gray-700 text-xs cursor-pointer"
                         >
-                            Hủy bỏ
+                            [Hủy bỏ]
                         </button>
                         <button
                             type="submit"
                             disabled={submitting}
-                            className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-xs font-semibold transition disabled:opacity-50 shadow-xs"
+                            className="px-3 py-1.5 border border-gray-900 bg-gray-900 hover:bg-gray-800 text-white text-xs font-bold disabled:opacity-50 cursor-pointer"
                         >
-                            {submitting ? 'Đang lưu...' : editingItem ? 'Lưu thay đổi' : 'Nộp đơn đăng ký'}
+                            {submitting ? '[Đang lưu...]' : editingItem ? '[Lưu thay đổi]' : '[Tạo đăng ký]'}
                         </button>
                     </div>
                 </form>

@@ -40,14 +40,14 @@ export const DashboardHome: React.FC = () => {
             });
 
             setServiceStatuses({
-                auth: true, // Auth service
+                auth: true,
                 deTai: dtRes.isLive,
                 sinhVien: svRes.isLive,
                 giangVien: gvRes.isLive,
                 dangKy: dkRes.isLive,
             });
         } catch {
-            // Error
+            // Keep previous statuses
         } finally {
             setTestingConnectivity(false);
         }
@@ -56,7 +56,6 @@ export const DashboardHome: React.FC = () => {
     useEffect(() => {
         testAllServices();
 
-        // Load current base URLs
         const initialUrls: Record<string, string> = {};
         Object.keys(DEFAULT_SERVICE_CONFIG).forEach((k) => {
             initialUrls[k] = getServiceConfig(k as any).baseURL;
@@ -71,251 +70,256 @@ export const DashboardHome: React.FC = () => {
         });
         setSavedMsg(true);
         setTimeout(() => setSavedMsg(false), 3000);
-        // Reload test
         testAllServices();
     };
 
     return (
-        <div className="space-y-8">
-            {/* Top Welcome & Actions */}
-            <div className="bg-linear-to-r from-blue-700 via-indigo-700 to-slate-900 rounded-3xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden">
-                <div className="relative z-10 max-w-2xl">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-blue-200 text-xs font-semibold backdrop-blur-md mb-3 border border-white/10">
-                        <span>🎓</span> Báo cáo Giữa kỳ — Kiến trúc Hướng Dịch vụ (SOA)
+        <div className="space-y-4">
+            {/* Top Spec Header */}
+            <div className="border border-gray-300 bg-white p-4 font-mono">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-gray-200">
+                    <div>
+                        <div className="text-[11px] text-gray-500 uppercase tracking-wider">
+                            Kiến trúc Hướng Dịch vụ (SOA) - Báo cáo giữa kỳ
+                        </div>
+                        <h2 className="text-base font-bold text-gray-900 mt-0.5">
+                            BẢNG ĐIỀU KHIỂN KIỂM THỬ BACKEND MICROSERVICES
+                        </h2>
                     </div>
-                    <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
-                        Hệ thống Quản lý Đồ án Tốt nghiệp
-                    </h1>
-                    <p className="mt-2 text-xs sm:text-sm text-blue-100/90 leading-relaxed">
-                        Mô hình phân tán gồm <strong>5 microservice độc lập</strong> (Auth, DeTai, SinhVien, GiangVien, DangKy) trao đổi dữ liệu qua giao thức HTTP/REST, với cơ sở dữ liệu riêng biệt theo nguyên lý SOA.
-                    </p>
 
-                    <div className="mt-6 flex flex-wrap items-center gap-3">
+                    <div className="flex flex-wrap items-center gap-2">
                         <button
+                            type="button"
                             onClick={testAllServices}
                             disabled={testingConnectivity}
-                            className="px-4 py-2 bg-white text-blue-900 hover:bg-blue-50 rounded-xl text-xs font-bold transition shadow-sm flex items-center gap-2 disabled:opacity-50"
+                            className="px-3 py-1.5 border border-gray-900 bg-gray-900 hover:bg-gray-800 text-white text-xs font-semibold disabled:opacity-50 cursor-pointer"
                         >
-                            <span className={testingConnectivity ? 'animate-spin' : ''}>🔄</span>
-                            {testingConnectivity ? 'Đang ping services...' : 'Kiểm tra kết nối các Service'}
+                            {testingConnectivity ? '[Đang ping services...]' : '[Kiểm tra kết nối toàn bộ]'}
                         </button>
 
                         <button
+                            type="button"
                             onClick={() => setIsConfigModalOpen(true)}
-                            className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-xl text-xs font-semibold backdrop-blur-md border border-white/20 transition flex items-center gap-1.5"
+                            className="px-3 py-1.5 border border-gray-300 bg-white hover:bg-gray-100 text-gray-800 text-xs cursor-pointer"
                         >
-                            <span>⚙️</span>
-                            Cấu hình Endpoint Service
+                            [Cấu hình Endpoint URLs]
                         </button>
                     </div>
                 </div>
 
-                {/* Decorative background shapes */}
-                <div className="absolute right-0 top-0 bottom-0 w-1/3 opacity-10 pointer-events-none flex items-center justify-center text-9xl">
-                    🌐
+                <div className="pt-2 text-xs text-gray-600 font-sans">
+                    Mô hình 5 microservices độc lập giao tiếp qua HTTP/REST JSON:
+                    <span className="font-mono text-gray-800 ml-1">
+                        Auth (:7001), DangKy (:7002), DeTai (:7003), GiangVien (:7004), SinhVien (:7005).
+                    </span>
                 </div>
             </div>
 
-            {/* Quick Metrics */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            {/* Metrics Grid */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
                 <Link
                     to="/dashboard/de-tai"
-                    className="p-5 bg-white rounded-2xl border border-gray-200 shadow-xs hover:shadow-md hover:border-orange-300 transition group"
+                    className="p-3 bg-white border border-gray-300 hover:border-gray-500 transition block font-mono"
                 >
-                    <div className="flex items-center justify-between">
-                        <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">
-                            Đề tài (:7003)
-                        </span>
-                        <span className="text-base p-2 bg-orange-50 rounded-xl group-hover:scale-110 transition">
-                            📚
-                        </span>
+                    <div className="flex justify-between items-center text-xs text-gray-500">
+                        <span>[DeTaiService]</span>
+                        <span>:7003</span>
                     </div>
-                    <div className="mt-3 flex items-baseline gap-2">
-                        <span className="text-2xl font-black text-gray-900">{counts.deTai}</span>
-                        <span className="text-xs text-gray-400">đề tài</span>
+                    <div className="mt-2 text-2xl font-bold text-gray-900">
+                        {counts.deTai}
                     </div>
-                    <div className="mt-2 flex items-center gap-1.5 text-[11px]">
+                    <div className="mt-1 text-[11px] flex justify-between items-center">
+                        <span className="text-gray-500">Đề tài tốt nghiệp</span>
                         <span
-                            className={`w-2 h-2 rounded-full ${
-                                serviceStatuses.deTai ? 'bg-emerald-500' : 'bg-amber-400'
+                            className={`px-1 text-[10px] font-bold ${
+                                serviceStatuses.deTai
+                                    ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
+                                    : 'bg-amber-100 text-amber-800 border border-amber-300'
                             }`}
-                        />
-                        <span className="text-gray-500">
-                            {serviceStatuses.deTai ? 'Kết nối live' : 'Mock data fallback'}
+                        >
+                            {serviceStatuses.deTai ? 'LIVE' : 'MOCK'}
                         </span>
                     </div>
                 </Link>
 
                 <Link
                     to="/dashboard/sinh-vien"
-                    className="p-5 bg-white rounded-2xl border border-gray-200 shadow-xs hover:shadow-md hover:border-emerald-300 transition group"
+                    className="p-3 bg-white border border-gray-300 hover:border-gray-500 transition block font-mono"
                 >
-                    <div className="flex items-center justify-between">
-                        <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">
-                            Sinh viên (:7005)
-                        </span>
-                        <span className="text-base p-2 bg-emerald-50 rounded-xl group-hover:scale-110 transition">
-                            🎓
-                        </span>
+                    <div className="flex justify-between items-center text-xs text-gray-500">
+                        <span>[SinhVienService]</span>
+                        <span>:7005</span>
                     </div>
-                    <div className="mt-3 flex items-baseline gap-2">
-                        <span className="text-2xl font-black text-gray-900">{counts.sinhVien}</span>
-                        <span className="text-xs text-gray-400">sinh viên</span>
+                    <div className="mt-2 text-2xl font-bold text-gray-900">
+                        {counts.sinhVien}
                     </div>
-                    <div className="mt-2 flex items-center gap-1.5 text-[11px]">
+                    <div className="mt-1 text-[11px] flex justify-between items-center">
+                        <span className="text-gray-500">Hồ sơ sinh viên</span>
                         <span
-                            className={`w-2 h-2 rounded-full ${
-                                serviceStatuses.sinhVien ? 'bg-emerald-500' : 'bg-amber-400'
+                            className={`px-1 text-[10px] font-bold ${
+                                serviceStatuses.sinhVien
+                                    ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
+                                    : 'bg-amber-100 text-amber-800 border border-amber-300'
                             }`}
-                        />
-                        <span className="text-gray-500">
-                            {serviceStatuses.sinhVien ? 'Kết nối live' : 'Mock data fallback'}
+                        >
+                            {serviceStatuses.sinhVien ? 'LIVE' : 'MOCK'}
                         </span>
                     </div>
                 </Link>
 
                 <Link
                     to="/dashboard/giang-vien"
-                    className="p-5 bg-white rounded-2xl border border-gray-200 shadow-xs hover:shadow-md hover:border-purple-300 transition group"
+                    className="p-3 bg-white border border-gray-300 hover:border-gray-500 transition block font-mono"
                 >
-                    <div className="flex items-center justify-between">
-                        <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">
-                            Giảng viên (:7004)
-                        </span>
-                        <span className="text-base p-2 bg-purple-50 rounded-xl group-hover:scale-110 transition">
-                            👨‍🏫
-                        </span>
+                    <div className="flex justify-between items-center text-xs text-gray-500">
+                        <span>[GiangVienService]</span>
+                        <span>:7004</span>
                     </div>
-                    <div className="mt-3 flex items-baseline gap-2">
-                        <span className="text-2xl font-black text-gray-900">{counts.giangVien}</span>
-                        <span className="text-xs text-gray-400">thầy / cô</span>
+                    <div className="mt-2 text-2xl font-bold text-gray-900">
+                        {counts.giangVien}
                     </div>
-                    <div className="mt-2 flex items-center gap-1.5 text-[11px]">
+                    <div className="mt-1 text-[11px] flex justify-between items-center">
+                        <span className="text-gray-500">Giảng viên / Hội đồng</span>
                         <span
-                            className={`w-2 h-2 rounded-full ${
-                                serviceStatuses.giangVien ? 'bg-emerald-500' : 'bg-amber-400'
+                            className={`px-1 text-[10px] font-bold ${
+                                serviceStatuses.giangVien
+                                    ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
+                                    : 'bg-amber-100 text-amber-800 border border-amber-300'
                             }`}
-                        />
-                        <span className="text-gray-500">
-                            {serviceStatuses.giangVien ? 'Kết nối live' : 'Mock data fallback'}
+                        >
+                            {serviceStatuses.giangVien ? 'LIVE' : 'MOCK'}
                         </span>
                     </div>
                 </Link>
 
                 <Link
                     to="/dashboard/dang-ky"
-                    className="p-5 bg-white rounded-2xl border border-gray-200 shadow-xs hover:shadow-md hover:border-red-300 transition group"
+                    className="p-3 bg-white border border-gray-300 hover:border-gray-500 transition block font-mono"
                 >
-                    <div className="flex items-center justify-between">
-                        <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">
-                            Đăng ký (:7002)
-                        </span>
-                        <span className="text-base p-2 bg-rose-50 rounded-xl group-hover:scale-110 transition">
-                            📝
-                        </span>
+                    <div className="flex justify-between items-center text-xs text-gray-500">
+                        <span>[DangKyService]</span>
+                        <span>:7002</span>
                     </div>
-                    <div className="mt-3 flex items-baseline gap-2">
-                        <span className="text-2xl font-black text-gray-900">{counts.dangKy}</span>
-                        <span className="text-xs text-gray-400">hồ sơ</span>
+                    <div className="mt-2 text-2xl font-bold text-gray-900">
+                        {counts.dangKy}
                     </div>
-                    <div className="mt-2 flex items-center gap-1.5 text-[11px]">
+                    <div className="mt-1 text-[11px] flex justify-between items-center">
+                        <span className="text-gray-500">Phiếu đăng ký đề tài</span>
                         <span
-                            className={`w-2 h-2 rounded-full ${
-                                serviceStatuses.dangKy ? 'bg-emerald-500' : 'bg-amber-400'
+                            className={`px-1 text-[10px] font-bold ${
+                                serviceStatuses.dangKy
+                                    ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
+                                    : 'bg-amber-100 text-amber-800 border border-amber-300'
                             }`}
-                        />
-                        <span className="text-gray-500">
-                            {serviceStatuses.dangKy ? 'Kết nối live' : 'Mock data fallback'}
+                        >
+                            {serviceStatuses.dangKy ? 'LIVE' : 'MOCK'}
                         </span>
                     </div>
                 </Link>
             </div>
 
-            {/* Architecture Diagram Box */}
-            <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-xs space-y-4">
-                <div className="flex items-center justify-between pb-3 border-b border-gray-100">
-                    <div>
-                        <h3 className="text-sm font-bold text-gray-900">
-                            Sơ đồ phối hợp Kiến trúc Hướng Dịch vụ (SOA)
-                        </h3>
-                        <p className="text-xs text-gray-500 mt-0.5">
-                            Minh họa các kết nối HTTP/REST độc lập giữa Client và từng cụm Service
-                        </p>
-                    </div>
-                    <span className="text-xs px-2.5 py-1 bg-blue-50 text-blue-700 font-mono rounded-full font-medium">
-                        HTTP/REST Protocols
+            {/* Service Testing Matrix */}
+            <div className="border border-gray-300 bg-white">
+                <div className="p-3 border-b border-gray-300 bg-gray-50 font-mono text-xs flex justify-between items-center">
+                    <span className="font-bold text-gray-900">
+                        MA TRẬN DỊCH VỤ MICROSERVICES (SERVICE SPEC MATRIX)
+                    </span>
+                    <span className="text-[11px] text-gray-500">
+                        Kiểm thử trạng thái thời gian thực
                     </span>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-5 gap-3 pt-2">
-                    {Object.values(DEFAULT_SERVICE_CONFIG).map((cfg) => {
-                        const isLive = serviceStatuses[cfg.key];
-                        return (
-                            <div
-                                key={cfg.key}
-                                className="p-4 rounded-xl border transition-all text-xs space-y-2.5 bg-gray-50/50"
-                                style={{
-                                    borderColor: `${cfg.color}30`,
-                                }}
-                            >
-                                <div className="flex items-center justify-between">
-                                    <span
-                                        className="font-bold text-xs"
-                                        style={{ color: cfg.color }}
-                                    >
-                                        {cfg.name}
-                                    </span>
-                                    <span className="font-mono text-[10px] px-1.5 py-0.5 rounded bg-white font-bold text-gray-600 border border-gray-200">
-                                        :{cfg.port}
-                                    </span>
-                                </div>
+                <div className="overflow-x-auto">
+                    <table className="w-full text-left font-mono text-xs border-collapse">
+                        <thead className="bg-gray-100 text-gray-700 text-[11px] uppercase border-b border-gray-300">
+                            <tr>
+                                <th className="px-3 py-2 border-r border-gray-200">Tên dịch vụ</th>
+                                <th className="px-3 py-2 border-r border-gray-200">Cổng Port</th>
+                                <th className="px-3 py-2 border-r border-gray-200">Giao thức</th>
+                                <th className="px-3 py-2 border-r border-gray-200">Base URL cấu hình</th>
+                                <th className="px-3 py-2 border-r border-gray-200">Trạng thái kết nối</th>
+                                <th className="px-3 py-2 text-right">Điều hướng</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-200 font-mono text-xs">
+                            {Object.values(DEFAULT_SERVICE_CONFIG).map((cfg) => {
+                                const isLive = serviceStatuses[cfg.key];
+                                const currentUrl = getServiceConfig(cfg.key).baseURL;
+                                const linkMap: Record<string, string> = {
+                                    deTai: '/dashboard/de-tai',
+                                    sinhVien: '/dashboard/sinh-vien',
+                                    giangVien: '/dashboard/giang-vien',
+                                    dangKy: '/dashboard/dang-ky',
+                                    auth: '/',
+                                };
 
-                                <p className="text-[11px] text-gray-500 line-clamp-2">
-                                    {cfg.description}
-                                </p>
-
-                                <div className="pt-2 border-t border-gray-200/60 flex items-center justify-between text-[10px] font-mono">
-                                    <span className="text-gray-400">Kết nối:</span>
-                                    {isLive ? (
-                                        <span className="text-emerald-700 font-bold bg-emerald-100/70 px-1.5 py-0.5 rounded">
-                                            ✓ Live Port
-                                        </span>
-                                    ) : (
-                                        <span className="text-amber-700 font-medium bg-amber-100/70 px-1.5 py-0.5 rounded">
-                                            ⚡ Mock Fallback
-                                        </span>
-                                    )}
-                                </div>
-                            </div>
-                        );
-                    })}
+                                return (
+                                    <tr key={cfg.key} className="hover:bg-gray-50">
+                                        <td className="px-3 py-2.5 font-bold text-gray-900 border-r border-gray-200">
+                                            {cfg.name}
+                                        </td>
+                                        <td className="px-3 py-2.5 text-gray-700 border-r border-gray-200 font-bold">
+                                            :{cfg.port}
+                                        </td>
+                                        <td className="px-3 py-2.5 text-gray-600 border-r border-gray-200 text-[11px]">
+                                            HTTP/REST JSON
+                                        </td>
+                                        <td className="px-3 py-2.5 text-gray-600 border-r border-gray-200 text-[11px]">
+                                            {currentUrl}
+                                        </td>
+                                        <td className="px-3 py-2.5 border-r border-gray-200">
+                                            <span
+                                                className={`px-2 py-0.5 text-[10px] font-bold border ${
+                                                    isLive
+                                                        ? 'bg-emerald-50 text-emerald-800 border-emerald-400'
+                                                        : 'bg-amber-50 text-amber-800 border-amber-400'
+                                                }`}
+                                            >
+                                                {isLive ? '[ONLINE - LIVE]' : '[FALLBACK MOCK]'}
+                                            </span>
+                                        </td>
+                                        <td className="px-3 py-2.5 text-right">
+                                            {linkMap[cfg.key] && (
+                                                <Link
+                                                    to={linkMap[cfg.key]}
+                                                    className="px-2 py-0.5 border border-gray-300 hover:border-gray-500 bg-white text-gray-700 text-xs"
+                                                >
+                                                    [Mở trang]
+                                                </Link>
+                                            )}
+                                        </td>
+                                    </tr>
+                                );
+                            })}
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
-            {/* Modal cấu hình Endpoint (cho phép đổi IP/Port linh hoạt) */}
+            {/* Modal cấu hình Endpoint */}
             <Modal
                 isOpen={isConfigModalOpen}
-                title="Cấu hình Endpoint các Service SOA"
+                title="[CẤU HÌNH ENDPOINT URL CHO CÁC SERVICES]"
                 onClose={() => setIsConfigModalOpen(false)}
                 maxWidth="lg"
             >
-                <form onSubmit={handleSaveUrls} className="space-y-4 text-xs">
-                    <p className="text-gray-500 leading-relaxed">
-                        Bạn có thể linh hoạt thay đổi địa chỉ IP hoặc cổng port của từng microservice tại đây mà không cần sửa code giao diện. Cấu hình được lưu trong trình duyệt.
+                <form onSubmit={handleSaveUrls} className="space-y-3 font-mono text-xs">
+                    <p className="text-gray-600 font-sans leading-relaxed text-xs">
+                        Thay đổi địa chỉ IP hoặc cổng port của từng microservice để kiểm thử backend chạy trên máy khác hoặc docker container. Cấu hình được lưu vào trình duyệt.
                     </p>
 
                     {savedMsg && (
-                        <div className="p-2.5 bg-emerald-50 text-emerald-700 rounded-lg font-medium border border-emerald-200">
-                            ✓ Đã cập nhật endpoint thành công!
+                        <div className="p-2 border border-emerald-400 bg-emerald-50 text-emerald-800 text-xs font-bold">
+                            [OK] Đã cập nhật cấu hình thành công!
                         </div>
                     )}
 
-                    <div className="space-y-3">
+                    <div className="space-y-2">
                         {Object.values(DEFAULT_SERVICE_CONFIG).map((cfg) => (
-                            <div key={cfg.key} className="space-y-1">
-                                <label className="flex items-center justify-between font-semibold text-gray-700">
-                                    <span>{cfg.name} ({cfg.displayName})</span>
-                                    <span className="font-mono text-[11px] text-gray-400">Default: :{cfg.port}</span>
+                            <div key={cfg.key} className="p-2 border border-gray-200 bg-gray-50">
+                                <label className="flex items-center justify-between font-bold text-gray-800 mb-1">
+                                    <span>{cfg.name}</span>
+                                    <span className="text-[11px] text-gray-500">Mặc định: :{cfg.port}</span>
                                 </label>
                                 <input
                                     type="text"
@@ -323,13 +327,13 @@ export const DashboardHome: React.FC = () => {
                                     onChange={(e) =>
                                         setCustomUrls({ ...customUrls, [cfg.key]: e.target.value })
                                     }
-                                    className="w-full px-3 py-1.5 border border-gray-300 rounded-lg font-mono text-xs focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:outline-none"
+                                    className="w-full px-2 py-1 border border-gray-300 bg-white text-xs font-mono focus:outline-none"
                                 />
                             </div>
                         ))}
                     </div>
 
-                    <div className="flex items-center justify-end gap-2 pt-3 border-t border-gray-100">
+                    <div className="flex items-center justify-end gap-2 pt-2 border-t border-gray-200">
                         <button
                             type="button"
                             onClick={() => {
@@ -339,15 +343,15 @@ export const DashboardHome: React.FC = () => {
                                 });
                                 setCustomUrls(resetUrls);
                             }}
-                            className="px-3 py-1.5 text-gray-600 hover:bg-gray-100 rounded-lg transition"
+                            className="px-3 py-1 border border-gray-300 bg-white hover:bg-gray-100 text-gray-700 text-xs cursor-pointer"
                         >
-                            Khôi phục mặc định
+                            [Khôi phục mặc định]
                         </button>
                         <button
                             type="submit"
-                            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition shadow-xs"
+                            className="px-3 py-1 border border-gray-900 bg-gray-900 hover:bg-gray-800 text-white text-xs font-bold cursor-pointer"
                         >
-                            Lưu cấu hình
+                            [Lưu cấu hình]
                         </button>
                     </div>
                 </form>

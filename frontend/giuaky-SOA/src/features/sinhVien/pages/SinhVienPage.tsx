@@ -42,7 +42,7 @@ export const SinhVienPage: React.FC = () => {
     };
 
     const handleDelete = async (item: SinhVien) => {
-        if (window.confirm(`Bạn có chắc chắn muốn xóa sinh viên "${item.hoTen}" (${item.maSV})?`)) {
+        if (window.confirm(`Xác nhận xóa sinh viên "${item.hoTen}" (${item.maSV})?`)) {
             try {
                 await deleteSinhVien(item.maSV);
             } catch (err: any) {
@@ -84,59 +84,52 @@ export const SinhVienPage: React.FC = () => {
         {
             header: 'Mã SV',
             key: 'maSV',
-            className: 'w-32',
-            render: (item) => (
-                <span className="font-mono font-bold text-xs bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-md border border-emerald-200">
-                    {item.maSV}
-                </span>
-            ),
+            className: 'w-28 font-mono font-bold text-gray-900',
+            render: (item) => <span>{item.maSV}</span>,
         },
         {
             header: 'Họ và tên',
             key: 'hoTen',
             className: 'font-semibold text-gray-900',
             render: (item) => (
-                <div className="flex items-center gap-2.5">
-                    <div className="w-7 h-7 rounded-full bg-emerald-600 text-white font-bold flex items-center justify-center text-xs">
-                        {item.hoTen.split(' ').pop()?.charAt(0) || 'S'}
-                    </div>
-                    <div>
-                        <p className="font-semibold text-gray-900 text-xs">{item.hoTen}</p>
-                        <p className="text-[11px] text-gray-400 font-mono">{item.email}</p>
-                    </div>
+                <div>
+                    <span className="font-semibold text-gray-900">{item.hoTen}</span>
+                    <span className="block text-[11px] text-gray-500 font-mono">{item.email}</span>
                 </div>
             ),
         },
         {
-            header: 'Khoa / Viện',
+            header: 'Khoa đào tạo',
             key: 'khoa',
-            render: (item) => (
-                <span className="text-xs text-gray-700 font-medium px-2 py-0.5 bg-gray-100 rounded">
-                    {item.khoa}
-                </span>
-            ),
+            className: 'text-gray-700',
         },
         {
             header: 'Niên khóa',
             key: 'nienKhoa',
-            className: 'text-xs text-gray-500 font-mono',
+            className: 'text-xs text-gray-600 font-mono w-32',
         },
     ];
 
     return (
-        <div className="space-y-6">
-            <ServiceBadge serviceKey="sinhVien" isLive={isLive} />
+        <div className="space-y-3">
+            <ServiceBadge serviceKey="sinhVien" isLive={isLive} onRefresh={fetchSinhViens} />
 
             {error && (
-                <div className="p-3 bg-red-50 text-red-700 border border-red-200 rounded-xl text-xs flex items-center justify-between">
-                    <span>⚠️ {error}</span>
-                    <button onClick={fetchSinhViens} className="underline font-bold">Thử lại</button>
+                <div className="p-2 border border-rose-400 bg-rose-50 text-rose-800 text-xs font-mono flex items-center justify-between">
+                    <span>[LỖI]: {error}</span>
+                    <button
+                        type="button"
+                        onClick={fetchSinhViens}
+                        className="px-2 py-0.5 border border-rose-300 bg-white hover:bg-rose-100 text-rose-800 cursor-pointer"
+                    >
+                        [Thử lại]
+                    </button>
                 </div>
             )}
 
             <DataTable<SinhVien>
-                title="Danh sách Sinh viên tốt nghiệp"
-                description="Dữ liệu do SinhVienService (:7005) phụ trách quản trị độc lập"
+                title="DANH SÁCH SINH VIÊN TỐT NGHIỆP"
+                description="Quản lý bởi SinhVienService (:7005) - Dữ liệu độc lập"
                 columns={columns}
                 data={sinhViens}
                 idKey="maSV"
@@ -145,26 +138,26 @@ export const SinhVienPage: React.FC = () => {
                 onEdit={handleOpenEdit}
                 onDelete={handleDelete}
                 onRefresh={fetchSinhViens}
-                searchPlaceholder="Tìm theo Mã SV, họ tên hoặc khoa..."
+                searchPlaceholder="Mã SV, họ tên hoặc khoa..."
                 searchKeys={['maSV', 'hoTen', 'email', 'khoa']}
             />
 
-            {/* Modal */}
+            {/* Modal Wireframe */}
             <Modal
                 isOpen={isModalOpen}
-                title={editingItem ? `Chỉnh sửa sinh viên: ${editingItem.maSV}` : 'Thêm mới sinh viên'}
+                title={editingItem ? `[CẬP NHẬT SINH VIÊN: ${editingItem.maSV}]` : '[THÊM SINH VIÊN MỚI]'}
                 onClose={() => setIsModalOpen(false)}
             >
-                <form onSubmit={handleSubmit} className="space-y-4">
+                <form onSubmit={handleSubmit} className="space-y-3 text-xs font-mono">
                     {formError && (
-                        <div className="p-3 bg-red-50 text-red-600 rounded-lg text-xs border border-red-200">
-                            {formError}
+                        <div className="p-2 border border-rose-300 bg-rose-50 text-rose-700 text-xs">
+                            [LỖI]: {formError}
                         </div>
                     )}
 
                     <div>
-                        <label className="block text-xs font-semibold text-gray-700 mb-1">
-                            Mã sinh viên <span className="text-red-500">*</span>
+                        <label className="block font-bold text-gray-700 mb-1">
+                            Mã sinh viên *
                         </label>
                         <input
                             type="text"
@@ -173,13 +166,13 @@ export const SinhVienPage: React.FC = () => {
                             placeholder="Ví dụ: 4451050099"
                             value={formData.maSV}
                             onChange={(e) => setFormData({ ...formData, maSV: e.target.value })}
-                            className="w-full px-3.5 py-2 border border-gray-300 rounded-lg text-xs font-mono focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 focus:outline-none transition disabled:bg-gray-100"
+                            className="w-full px-2.5 py-1.5 border border-gray-300 bg-white text-xs font-mono focus:outline-none disabled:bg-gray-100"
                         />
                     </div>
 
                     <div>
-                        <label className="block text-xs font-semibold text-gray-700 mb-1">
-                            Họ và tên <span className="text-red-500">*</span>
+                        <label className="block font-bold text-gray-700 mb-1">
+                            Họ và tên *
                         </label>
                         <input
                             type="text"
@@ -187,13 +180,13 @@ export const SinhVienPage: React.FC = () => {
                             placeholder="Ví dụ: Trần Văn Nam"
                             value={formData.hoTen}
                             onChange={(e) => setFormData({ ...formData, hoTen: e.target.value })}
-                            className="w-full px-3.5 py-2 border border-gray-300 rounded-lg text-xs focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 focus:outline-none transition"
+                            className="w-full px-2.5 py-1.5 border border-gray-300 bg-white text-xs focus:outline-none"
                         />
                     </div>
 
                     <div>
-                        <label className="block text-xs font-semibold text-gray-700 mb-1">
-                            Email trường cấp <span className="text-red-500">*</span>
+                        <label className="block font-bold text-gray-700 mb-1">
+                            Email trường cấp *
                         </label>
                         <input
                             type="email"
@@ -201,50 +194,50 @@ export const SinhVienPage: React.FC = () => {
                             placeholder="namtv@qnu.edu.vn"
                             value={formData.email}
                             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                            className="w-full px-3.5 py-2 border border-gray-300 rounded-lg text-xs font-mono focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 focus:outline-none transition"
+                            className="w-full px-2.5 py-1.5 border border-gray-300 bg-white text-xs font-mono focus:outline-none"
                         />
                     </div>
 
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-2 gap-2">
                         <div>
-                            <label className="block text-xs font-semibold text-gray-700 mb-1">
+                            <label className="block font-bold text-gray-700 mb-1">
                                 Khoa đào tạo
                             </label>
                             <input
                                 type="text"
                                 value={formData.khoa}
                                 onChange={(e) => setFormData({ ...formData, khoa: e.target.value })}
-                                className="w-full px-3.5 py-2 border border-gray-300 rounded-lg text-xs focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 focus:outline-none transition"
+                                className="w-full px-2.5 py-1.5 border border-gray-300 bg-white text-xs focus:outline-none"
                             />
                         </div>
 
                         <div>
-                            <label className="block text-xs font-semibold text-gray-700 mb-1">
+                            <label className="block font-bold text-gray-700 mb-1">
                                 Niên khóa
                             </label>
                             <input
                                 type="text"
                                 value={formData.nienKhoa}
                                 onChange={(e) => setFormData({ ...formData, nienKhoa: e.target.value })}
-                                className="w-full px-3.5 py-2 border border-gray-300 rounded-lg text-xs font-mono focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 focus:outline-none transition"
+                                className="w-full px-2.5 py-1.5 border border-gray-300 bg-white text-xs font-mono focus:outline-none"
                             />
                         </div>
                     </div>
 
-                    <div className="flex items-center justify-end gap-2 pt-3 border-t border-gray-100">
+                    <div className="flex items-center justify-end gap-2 pt-2 border-t border-gray-200">
                         <button
                             type="button"
                             onClick={() => setIsModalOpen(false)}
-                            className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg text-xs font-medium hover:bg-gray-50 transition"
+                            className="px-3 py-1.5 border border-gray-300 bg-white hover:bg-gray-100 text-gray-700 text-xs cursor-pointer"
                         >
-                            Hủy bỏ
+                            [Hủy bỏ]
                         </button>
                         <button
                             type="submit"
                             disabled={submitting}
-                            className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold transition disabled:opacity-50 shadow-xs"
+                            className="px-3 py-1.5 border border-gray-900 bg-gray-900 hover:bg-gray-800 text-white text-xs font-bold disabled:opacity-50 cursor-pointer"
                         >
-                            {submitting ? 'Đang lưu...' : editingItem ? 'Lưu thay đổi' : 'Thêm sinh viên'}
+                            {submitting ? '[Đang lưu...]' : editingItem ? '[Lưu thay đổi]' : '[Thêm sinh viên]'}
                         </button>
                     </div>
                 </form>

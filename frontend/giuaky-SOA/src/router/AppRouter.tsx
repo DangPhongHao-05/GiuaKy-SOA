@@ -47,18 +47,18 @@ const router = createBrowserRouter([
     {
         path: '*',
         element: (
-            <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4">
-                <div className="text-center bg-white p-8 rounded-2xl shadow-lg border border-gray-100 max-w-md">
-                    <div className="text-5xl mb-3">🔍</div>
-                    <h2 className="text-xl font-bold text-gray-800">404 - Không tìm thấy trang</h2>
-                    <p className="text-xs text-gray-500 mt-2 mb-6">
-                        Đường dẫn bạn yêu cầu không tồn tại trong hệ thống SOA.
+            <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4 font-mono text-xs">
+                <div className="text-center bg-white p-6 border-2 border-gray-800 max-w-md w-full shadow-sm">
+                    <div className="font-bold text-gray-400 text-lg mb-2">[HTTP 404]</div>
+                    <h2 className="text-sm font-bold text-gray-900">KHÔNG TÌM THẤY TRANG YÊU CẦU</h2>
+                    <p className="text-xs text-gray-500 mt-2 mb-4 font-sans">
+                        Endpoint hoặc tuyến đường dẫn không tồn tại trong hệ thống SOA.
                     </p>
                     <Link
                         to="/dashboard"
-                        className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold transition"
+                        className="inline-block px-3 py-1.5 border border-gray-900 bg-gray-900 hover:bg-gray-800 text-white font-bold"
                     >
-                        Quay lại Tổng quan Dashboard
+                        [Quay lại Bảng điều khiển SOA]
                     </Link>
                 </div>
             </div>

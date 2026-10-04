@@ -42,7 +42,7 @@ export const GiangVienPage: React.FC = () => {
     };
 
     const handleDelete = async (item: GiangVien) => {
-        if (window.confirm(`Bạn có chắc chắn muốn xóa giảng viên "${item.hoTen}" (${item.maGV})?`)) {
+        if (window.confirm(`Xác nhận xóa giảng viên "${item.hoTen}" (${item.maGV})?`)) {
             try {
                 await deleteGiangVien(item.maGV);
             } catch (err: any) {
@@ -84,63 +84,52 @@ export const GiangVienPage: React.FC = () => {
         {
             header: 'Mã GV',
             key: 'maGV',
-            className: 'w-28',
-            render: (item) => (
-                <span className="font-mono font-bold text-xs bg-purple-50 text-purple-700 px-2.5 py-1 rounded-md border border-purple-200">
-                    {item.maGV}
-                </span>
-            ),
+            className: 'w-24 font-mono font-bold text-gray-900',
+            render: (item) => <span>{item.maGV}</span>,
         },
         {
             header: 'Họ tên Giảng viên',
             key: 'hoTen',
             className: 'font-semibold text-gray-900',
             render: (item) => (
-                <div className="flex items-center gap-2.5">
-                    <div className="w-7 h-7 rounded-full bg-purple-600 text-white font-bold flex items-center justify-center text-xs">
-                        {item.hoTen.split(' ').pop()?.charAt(0) || 'G'}
-                    </div>
-                    <div>
-                        <p className="font-semibold text-gray-900 text-xs">{item.hoTen}</p>
-                        <p className="text-[11px] text-gray-400 font-mono">{item.email}</p>
-                    </div>
+                <div>
+                    <span className="font-semibold text-gray-900">{item.hoTen}</span>
+                    <span className="block text-[11px] text-gray-500 font-mono">{item.email}</span>
                 </div>
             ),
         },
         {
             header: 'Bộ môn',
             key: 'boMon',
-            render: (item) => (
-                <span className="text-xs text-gray-700 font-medium px-2 py-0.5 bg-gray-100 rounded">
-                    {item.boMon}
-                </span>
-            ),
+            className: 'text-gray-700',
         },
         {
             header: 'Học vị',
             key: 'hocVi',
-            render: (item) => (
-                <span className="text-xs text-purple-700 font-semibold px-2 py-0.5 bg-purple-50 rounded border border-purple-100">
-                    {item.hocVi}
-                </span>
-            ),
+            className: 'text-gray-600 font-mono w-28',
         },
     ];
 
     return (
-        <div className="space-y-6">
-            <ServiceBadge serviceKey="giangVien" isLive={isLive} />
+        <div className="space-y-3">
+            <ServiceBadge serviceKey="giangVien" isLive={isLive} onRefresh={fetchGiangViens} />
 
             {error && (
-                <div className="p-3 bg-red-50 text-red-700 border border-red-200 rounded-xl text-xs flex items-center justify-between">
-                    <span>⚠️ {error}</span>
-                    <button onClick={fetchGiangViens} className="underline font-bold">Thử lại</button>
+                <div className="p-2 border border-rose-400 bg-rose-50 text-rose-800 text-xs font-mono flex items-center justify-between">
+                    <span>[LỖI]: {error}</span>
+                    <button
+                        type="button"
+                        onClick={fetchGiangViens}
+                        className="px-2 py-0.5 border border-rose-300 bg-white hover:bg-rose-100 text-rose-800 cursor-pointer"
+                    >
+                        [Thử lại]
+                    </button>
                 </div>
             )}
 
             <DataTable<GiangVien>
-                title="Hội đồng & Giảng viên Hướng dẫn"
-                description="Dữ liệu do GiangVienService (:7004) quản lý độc lập"
+                title="HỘI ĐỒNG GIẢNG VIÊN HƯỚNG DẪN"
+                description="Quản lý bởi GiangVienService (:7004) - Dữ liệu độc lập"
                 columns={columns}
                 data={giangViens}
                 idKey="maGV"
@@ -149,111 +138,106 @@ export const GiangVienPage: React.FC = () => {
                 onEdit={handleOpenEdit}
                 onDelete={handleDelete}
                 onRefresh={fetchGiangViens}
-                searchPlaceholder="Tìm theo Mã GV, họ tên hoặc bộ môn..."
-                searchKeys={['maGV', 'hoTen', 'email', 'boMon', 'hocVi']}
+                searchPlaceholder="Mã GV, họ tên hoặc bộ môn..."
+                searchKeys={['maGV', 'hoTen', 'email', 'boMon']}
             />
 
-            {/* Modal */}
+            {/* Modal Wireframe */}
             <Modal
                 isOpen={isModalOpen}
-                title={editingItem ? `Chỉnh sửa giảng viên: ${editingItem.maGV}` : 'Thêm mới giảng viên'}
+                title={editingItem ? `[CẬP NHẬT GIẢNG VIÊN: ${editingItem.maGV}]` : '[THÊM GIẢNG VIÊN MỚI]'}
                 onClose={() => setIsModalOpen(false)}
             >
-                <form onSubmit={handleSubmit} className="space-y-4">
+                <form onSubmit={handleSubmit} className="space-y-3 text-xs font-mono">
                     {formError && (
-                        <div className="p-3 bg-red-50 text-red-600 rounded-lg text-xs border border-red-200">
-                            {formError}
+                        <div className="p-2 border border-rose-300 bg-rose-50 text-rose-700 text-xs">
+                            [LỖI]: {formError}
                         </div>
                     )}
 
                     <div>
-                        <label className="block text-xs font-semibold text-gray-700 mb-1">
-                            Mã giảng viên <span className="text-red-500">*</span>
+                        <label className="block font-bold text-gray-700 mb-1">
+                            Mã giảng viên *
                         </label>
                         <input
                             type="text"
                             required
                             disabled={!!editingItem}
-                            placeholder="Ví dụ: GV099"
+                            placeholder="Ví dụ: GV012"
                             value={formData.maGV}
                             onChange={(e) => setFormData({ ...formData, maGV: e.target.value })}
-                            className="w-full px-3.5 py-2 border border-gray-300 rounded-lg text-xs font-mono focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 focus:outline-none transition disabled:bg-gray-100"
+                            className="w-full px-2.5 py-1.5 border border-gray-300 bg-white text-xs font-mono focus:outline-none disabled:bg-gray-100"
                         />
                     </div>
 
                     <div>
-                        <label className="block text-xs font-semibold text-gray-700 mb-1">
-                            Họ và tên <span className="text-red-500">*</span>
+                        <label className="block font-bold text-gray-700 mb-1">
+                            Họ và tên giảng viên *
                         </label>
                         <input
                             type="text"
                             required
-                            placeholder="Ví dụ: PGS.TS. Nguyễn Văn A"
+                            placeholder="Ví dụ: TS. Nguyễn Văn A"
                             value={formData.hoTen}
                             onChange={(e) => setFormData({ ...formData, hoTen: e.target.value })}
-                            className="w-full px-3.5 py-2 border border-gray-300 rounded-lg text-xs focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 focus:outline-none transition"
+                            className="w-full px-2.5 py-1.5 border border-gray-300 bg-white text-xs focus:outline-none"
                         />
                     </div>
 
                     <div>
-                        <label className="block text-xs font-semibold text-gray-700 mb-1">
-                            Email cơ quan <span className="text-red-500">*</span>
+                        <label className="block font-bold text-gray-700 mb-1">
+                            Email liên lạc *
                         </label>
                         <input
                             type="email"
                             required
-                            placeholder="gv@qnu.edu.vn"
+                            placeholder="anv@qnu.edu.vn"
                             value={formData.email}
                             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                            className="w-full px-3.5 py-2 border border-gray-300 rounded-lg text-xs font-mono focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 focus:outline-none transition"
+                            className="w-full px-2.5 py-1.5 border border-gray-300 bg-white text-xs font-mono focus:outline-none"
                         />
                     </div>
 
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-2 gap-2">
                         <div>
-                            <label className="block text-xs font-semibold text-gray-700 mb-1">
+                            <label className="block font-bold text-gray-700 mb-1">
                                 Bộ môn
                             </label>
                             <input
                                 type="text"
                                 value={formData.boMon}
                                 onChange={(e) => setFormData({ ...formData, boMon: e.target.value })}
-                                className="w-full px-3.5 py-2 border border-gray-300 rounded-lg text-xs focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 focus:outline-none transition"
+                                className="w-full px-2.5 py-1.5 border border-gray-300 bg-white text-xs focus:outline-none"
                             />
                         </div>
 
                         <div>
-                            <label className="block text-xs font-semibold text-gray-700 mb-1">
-                                Học vị
+                            <label className="block font-bold text-gray-700 mb-1">
+                                Học vị / Học hàm
                             </label>
-                            <select
+                            <input
+                                type="text"
                                 value={formData.hocVi}
                                 onChange={(e) => setFormData({ ...formData, hocVi: e.target.value })}
-                                className="w-full px-3.5 py-2 border border-gray-300 rounded-lg text-xs focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 focus:outline-none transition"
-                            >
-                                <option value="Cử nhân / Kỹ sư">Cử nhân / Kỹ sư</option>
-                                <option value="Thạc sĩ">Thạc sĩ</option>
-                                <option value="Tiến sĩ">Tiến sĩ</option>
-                                <option value="Phó Giáo sư">Phó Giáo sư</option>
-                                <option value="Giáo sư">Giáo sư</option>
-                            </select>
+                                className="w-full px-2.5 py-1.5 border border-gray-300 bg-white text-xs focus:outline-none"
+                            />
                         </div>
                     </div>
 
-                    <div className="flex items-center justify-end gap-2 pt-3 border-t border-gray-100">
+                    <div className="flex items-center justify-end gap-2 pt-2 border-t border-gray-200">
                         <button
                             type="button"
                             onClick={() => setIsModalOpen(false)}
-                            className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg text-xs font-medium hover:bg-gray-50 transition"
+                            className="px-3 py-1.5 border border-gray-300 bg-white hover:bg-gray-100 text-gray-700 text-xs cursor-pointer"
                         >
-                            Hủy bỏ
+                            [Hủy bỏ]
                         </button>
                         <button
                             type="submit"
                             disabled={submitting}
-                            className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-xs font-semibold transition disabled:opacity-50 shadow-xs"
+                            className="px-3 py-1.5 border border-gray-900 bg-gray-900 hover:bg-gray-800 text-white text-xs font-bold disabled:opacity-50 cursor-pointer"
                         >
-                            {submitting ? 'Đang lưu...' : editingItem ? 'Lưu thay đổi' : 'Thêm giảng viên'}
+                            {submitting ? '[Đang lưu...]' : editingItem ? '[Lưu thay đổi]' : '[Thêm giảng viên]'}
                         </button>
                     </div>
                 </form>

@@ -55,31 +55,37 @@ export function DataTable<T extends Record<string, any>>({
     });
 
     return (
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+        <div className="border border-gray-300 bg-white">
             {/* Header Toolbar */}
-            <div className="p-5 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="p-3 border-b border-gray-300 bg-gray-50 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
-                    <h3 className="text-lg font-bold text-gray-900">{title}</h3>
-                    {description && <p className="text-xs text-gray-500 mt-0.5">{description}</p>}
+                    <h3 className="text-sm font-bold text-gray-900 tracking-tight">{title}</h3>
+                    {description && (
+                        <p className="text-[11px] text-gray-600 font-mono mt-0.5">{description}</p>
+                    )}
                 </div>
 
-                <div className="flex flex-wrap items-center gap-2.5">
+                <div className="flex flex-wrap items-center gap-2">
                     {/* Search */}
-                    <div className="relative">
+                    <div className="flex items-center border border-gray-300 bg-white">
+                        <span className="px-2 py-1 text-gray-500 text-xs font-mono border-r border-gray-200">
+                            Tìm:
+                        </span>
                         <input
                             type="text"
                             placeholder={searchPlaceholder}
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-48 sm:w-64 pl-8 pr-3 py-1.5 text-xs bg-gray-50 border border-gray-200 rounded-lg focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition"
+                            className="w-40 sm:w-56 px-2 py-1 text-xs font-mono focus:outline-none"
                         />
-                        <span className="absolute left-2.5 top-2 text-gray-400 text-xs">🔍</span>
                         {searchQuery && (
                             <button
+                                type="button"
                                 onClick={() => setSearchQuery('')}
-                                className="absolute right-2.5 top-1.5 text-gray-400 hover:text-gray-600 text-xs"
+                                className="px-2 py-1 text-gray-500 hover:text-gray-900 text-xs font-mono cursor-pointer"
+                                title="Xóa tìm kiếm"
                             >
-                                ✕
+                                [X]
                             </button>
                         )}
                     </div>
@@ -90,11 +96,10 @@ export function DataTable<T extends Record<string, any>>({
                             type="button"
                             onClick={onRefresh}
                             disabled={loading}
-                            className="p-1.5 text-gray-600 hover:text-gray-900 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg transition disabled:opacity-50 text-xs flex items-center gap-1 font-medium px-2.5"
+                            className="px-2.5 py-1 border border-gray-300 bg-white hover:bg-gray-100 text-gray-800 text-xs font-mono disabled:opacity-50 cursor-pointer"
                             title="Tải lại từ service"
                         >
-                            <span className={loading ? 'animate-spin inline-block' : ''}>🔄</span>
-                            Làm mới
+                            {loading ? '[Đang tải...]' : '[Làm mới]'}
                         </button>
                     )}
 
@@ -105,10 +110,9 @@ export function DataTable<T extends Record<string, any>>({
                         <button
                             type="button"
                             onClick={onAdd}
-                            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold shadow-xs transition"
+                            className="px-3 py-1 border border-gray-900 bg-gray-900 hover:bg-gray-800 text-white text-xs font-mono font-semibold cursor-pointer"
                         >
-                            <span>+</span>
-                            Thêm mới
+                            [+ Thêm mới]
                         </button>
                     )}
                 </div>
@@ -116,48 +120,45 @@ export function DataTable<T extends Record<string, any>>({
 
             {/* Table */}
             <div className="overflow-x-auto">
-                <table className="w-full text-left text-sm text-gray-600">
-                    <thead className="bg-gray-50/75 text-xs uppercase font-semibold text-gray-500 border-b border-gray-200">
+                <table className="w-full text-left text-xs border-collapse">
+                    <thead className="bg-gray-100 text-gray-700 font-mono text-[11px] uppercase border-b border-gray-300">
                         <tr>
                             {columns.map((col, idx) => (
-                                <th key={idx} className={`px-5 py-3 ${col.className || ''}`}>
+                                <th key={idx} className={`px-3 py-2 border-r border-gray-200 last:border-r-0 ${col.className || ''}`}>
                                     {col.header}
                                 </th>
                             ))}
                             {(onEdit || onDelete) && (
-                                <th className="px-5 py-3 text-right">Thao tác</th>
+                                <th className="px-3 py-2 text-right">Thao tác</th>
                             )}
                         </tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-100">
+                    <tbody className="divide-y divide-gray-200 font-sans">
                         {loading && data.length === 0 ? (
                             <tr>
                                 <td
                                     colSpan={columns.length + (onEdit || onDelete ? 1 : 0)}
-                                    className="p-10 text-center text-gray-400 text-sm"
+                                    className="p-8 text-center text-gray-500 font-mono text-xs"
                                 >
-                                    <div className="flex flex-col items-center justify-center gap-2">
-                                        <div className="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
-                                        <span>Đang kết nối & tải dữ liệu qua REST API...</span>
-                                    </div>
+                                    [REST API] Đang kết nối tới microservice...
                                 </td>
                             </tr>
                         ) : filteredData.length === 0 ? (
                             <tr>
                                 <td
                                     colSpan={columns.length + (onEdit || onDelete ? 1 : 0)}
-                                    className="p-10 text-center text-gray-400 text-sm"
+                                    className="p-8 text-center text-gray-500 font-mono text-xs"
                                 >
-                                    {searchQuery ? 'Không tìm thấy kết quả phù hợp' : 'Chưa có bản ghi nào'}
+                                    {searchQuery ? '[Không tìm thấy bản ghi phù hợp]' : '[Chưa có dữ liệu nào]'}
                                 </td>
                             </tr>
                         ) : (
                             filteredData.map((item) => {
                                 const rowId = String(item[idKey]);
                                 return (
-                                    <tr key={rowId} className="hover:bg-blue-50/30 transition-colors">
+                                    <tr key={rowId} className="hover:bg-gray-50 transition-colors">
                                         {columns.map((col, cIdx) => (
-                                            <td key={cIdx} className={`px-5 py-3.5 text-xs text-gray-700 ${col.className || ''}`}>
+                                            <td key={cIdx} className={`px-3 py-2 text-gray-800 border-r border-gray-100 last:border-r-0 ${col.className || ''}`}>
                                                 {col.render
                                                     ? col.render(item)
                                                     : col.key
@@ -167,23 +168,23 @@ export function DataTable<T extends Record<string, any>>({
                                         ))}
 
                                         {(onEdit || onDelete) && (
-                                            <td className="px-5 py-3.5 text-right space-x-1.5 whitespace-nowrap">
+                                            <td className="px-3 py-2 text-right space-x-2 whitespace-nowrap font-mono text-xs">
                                                 {onEdit && (
                                                     <button
                                                         type="button"
                                                         onClick={() => onEdit(item)}
-                                                        className="px-2 py-1 text-xs font-medium text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded transition"
+                                                        className="px-1.5 py-0.5 border border-gray-300 hover:border-gray-500 text-gray-700 bg-white cursor-pointer"
                                                     >
-                                                        Sửa
+                                                        [Sửa]
                                                     </button>
                                                 )}
                                                 {onDelete && (
                                                     <button
                                                         type="button"
                                                         onClick={() => onDelete(item)}
-                                                        className="px-2 py-1 text-xs font-medium text-rose-600 hover:text-rose-800 hover:bg-rose-50 rounded transition"
+                                                        className="px-1.5 py-0.5 border border-rose-300 hover:border-rose-500 text-rose-700 bg-rose-50 cursor-pointer"
                                                     >
-                                                        Xóa
+                                                        [Xóa]
                                                     </button>
                                                 )}
                                             </td>
@@ -197,12 +198,12 @@ export function DataTable<T extends Record<string, any>>({
             </div>
 
             {/* Footer Summary */}
-            <div className="px-5 py-3 bg-gray-50/50 border-t border-gray-100 flex items-center justify-between text-xs text-gray-500">
+            <div className="px-3 py-2 bg-gray-50 border-t border-gray-300 flex items-center justify-between text-xs text-gray-600 font-mono">
                 <span>
-                    Hiển thị <strong className="text-gray-700">{filteredData.length}</strong> / {data.length} bản ghi
+                    Bản ghi: <strong>{filteredData.length}</strong> / {data.length}
                 </span>
-                <span className="font-mono text-[11px] text-gray-400">
-                    HTTP/REST Payload Cache
+                <span className="text-[11px] text-gray-500">
+                    Giao thức: HTTP/REST JSON
                 </span>
             </div>
         </div>

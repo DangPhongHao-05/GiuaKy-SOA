@@ -38,24 +38,26 @@ export const Modal: React.FC<ModalProps> = ({
         <div className="fixed inset-0 z-50 overflow-y-auto">
             {/* Backdrop */}
             <div
-                className="fixed inset-0 bg-black/50 backdrop-blur-xs transition-opacity"
+                className="fixed inset-0 bg-black/40"
                 onClick={onClose}
             />
 
             {/* Modal Box */}
             <div className="flex min-h-full items-center justify-center p-4">
                 <div
-                    className={`relative w-full ${widthClasses} transform overflow-hidden rounded-2xl bg-white p-6 text-left shadow-2xl transition-all border border-gray-100`}
+                    className={`relative w-full ${widthClasses} bg-white p-5 border-2 border-gray-800 shadow-lg text-left`}
                     onClick={(e) => e.stopPropagation()}
                 >
-                    <div className="flex items-center justify-between pb-4 mb-4 border-b border-gray-100">
-                        <h3 className="text-lg font-bold text-gray-900">{title}</h3>
+                    <div className="flex items-center justify-between pb-3 mb-3 border-b border-gray-300">
+                        <h3 className="text-sm font-bold text-gray-900 tracking-tight font-mono">
+                            {title}
+                        </h3>
                         <button
                             type="button"
                             onClick={onClose}
-                            className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition"
+                            className="px-2 py-0.5 border border-gray-300 hover:border-gray-500 bg-gray-50 text-gray-700 text-xs font-mono cursor-pointer"
                         >
-                            ✕
+                            [Đóng]
                         </button>
                     </div>
 

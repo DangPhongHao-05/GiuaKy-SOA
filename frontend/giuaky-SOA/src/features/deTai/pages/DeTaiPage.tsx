@@ -29,7 +29,7 @@ export const DeTaiPage: React.FC = () => {
     };
 
     const handleDelete = async (item: DeTai) => {
-        if (window.confirm(`Bạn có chắc chắn muốn xóa đề tài ID ${item.id}: "${item.tenDeTai}"?`)) {
+        if (window.confirm(`Xác nhận xóa đề tài ID ${item.id}: "${item.tenDeTai}"?`)) {
             try {
                 await deleteDeTai(item.id);
             } catch (err: any) {
@@ -66,47 +66,47 @@ export const DeTaiPage: React.FC = () => {
         {
             header: 'Mã số',
             key: 'id',
-            className: 'w-20 font-mono font-semibold text-gray-900',
-            render: (item) => <span className="bg-orange-50 text-orange-700 px-2 py-0.5 rounded font-mono font-bold text-xs">#{item.id}</span>,
+            className: 'w-20 font-mono font-bold text-gray-900',
+            render: (item) => <span>#{item.id}</span>,
         },
         {
             header: 'Tên đề tài tốt nghiệp',
             key: 'tenDeTai',
-            className: 'min-w-[280px]',
-            render: (item) => (
-                <div>
-                    <p className="font-semibold text-gray-900 text-sm">{item.tenDeTai}</p>
-                </div>
-            ),
+            className: 'font-semibold text-gray-900 min-w-[280px]',
+            render: (item) => <span>{item.tenDeTai}</span>,
         },
         {
             header: 'Mô tả chi tiết',
             key: 'moTa',
-            className: 'text-gray-500 max-w-[400px]',
+            className: 'text-gray-600 max-w-[400px]',
             render: (item) => (
-                <p className="line-clamp-2 text-xs text-gray-600">
-                    {item.moTa || <span className="italic text-gray-400">(Chưa có mô tả)</span>}
-                </p>
+                <span className="line-clamp-2">
+                    {item.moTa || <span className="italic text-gray-400">[Không có mô tả]</span>}
+                </span>
             ),
         },
     ];
 
     return (
-        <div className="space-y-6">
-            {/* Service Banner */}
-            <ServiceBadge serviceKey="deTai" isLive={isLive} />
+        <div className="space-y-3">
+            <ServiceBadge serviceKey="deTai" isLive={isLive} onRefresh={fetchDeTais} />
 
             {error && (
-                <div className="p-3 bg-red-50 text-red-700 border border-red-200 rounded-xl text-xs flex items-center justify-between">
-                    <span>⚠️ {error}</span>
-                    <button onClick={fetchDeTais} className="underline font-bold">Thử lại</button>
+                <div className="p-2 border border-rose-400 bg-rose-50 text-rose-800 text-xs font-mono flex items-center justify-between">
+                    <span>[LỖI]: {error}</span>
+                    <button
+                        type="button"
+                        onClick={fetchDeTais}
+                        className="px-2 py-0.5 border border-rose-300 bg-white hover:bg-rose-100 text-rose-800 cursor-pointer"
+                    >
+                        [Thử lại]
+                    </button>
                 </div>
             )}
 
-            {/* Main Table */}
             <DataTable<DeTai>
-                title="Danh mục Đề tài Tốt nghiệp"
-                description="Các đề tài nghiên cứu và phát triển được quản lý độc lập bởi DeTaiService"
+                title="DANH MỤC ĐỀ TÀI TỐT NGHIỆP"
+                description="Quản lý bởi DeTaiService (:7003) - Dữ liệu độc lập"
                 columns={columns}
                 data={deTais}
                 idKey="id"
@@ -115,64 +115,64 @@ export const DeTaiPage: React.FC = () => {
                 onEdit={handleOpenEdit}
                 onDelete={handleDelete}
                 onRefresh={fetchDeTais}
-                searchPlaceholder="Tìm theo tên hoặc mô tả đề tài..."
-                searchKeys={['tenDeTai', 'moTa']}
+                searchPlaceholder="Tên đề tài hoặc từ khóa..."
+                searchKeys={['id', 'tenDeTai', 'moTa']}
             />
 
-            {/* Modal Add / Edit */}
+            {/* Modal Wireframe */}
             <Modal
                 isOpen={isModalOpen}
-                title={editingItem ? `Chỉnh sửa đề tài #${editingItem.id}` : 'Thêm mới đề tài tốt nghiệp'}
+                title={editingItem ? `[CẬP NHẬT ĐỀ TÀI: #${editingItem.id}]` : '[THÊM ĐỀ TÀI MỚI]'}
                 onClose={() => setIsModalOpen(false)}
             >
-                <form onSubmit={handleSubmit} className="space-y-4">
+                <form onSubmit={handleSubmit} className="space-y-3 text-xs font-mono">
                     {formError && (
-                        <div className="p-3 bg-red-50 text-red-600 rounded-lg text-xs border border-red-200">
-                            {formError}
+                        <div className="p-2 border border-rose-300 bg-rose-50 text-rose-700 text-xs">
+                            [LỖI]: {formError}
                         </div>
                     )}
 
                     <div>
-                        <label className="block text-xs font-semibold text-gray-700 mb-1">
-                            Tên đề tài <span className="text-red-500">*</span>
+                        <label className="block font-bold text-gray-700 mb-1">
+                            Tên đề tài tốt nghiệp *
                         </label>
                         <input
                             type="text"
                             required
-                            placeholder="Ví dụ: Xây dựng cổng thông tin quản lý đào tạo..."
+                            placeholder="Ví dụ: Xây dựng hệ thống học trực tuyến theo kiến trúc SOA"
                             value={formData.tenDeTai}
                             onChange={(e) => setFormData({ ...formData, tenDeTai: e.target.value })}
-                            className="w-full px-3.5 py-2 border border-gray-300 rounded-lg text-xs focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 focus:outline-none transition"
+                            className="w-full px-2.5 py-1.5 border border-gray-300 bg-white text-xs focus:outline-none"
                         />
                     </div>
 
                     <div>
-                        <label className="block text-xs font-semibold text-gray-700 mb-1">
-                            Mô tả chi tiết
+                        <label className="block font-bold text-gray-700 mb-1">
+                            Mô tả mục tiêu & phạm vi đề tài
                         </label>
                         <textarea
                             rows={4}
-                            placeholder="Nhập yêu cầu, mục tiêu công nghệ và phạm vi đề tài..."
+                            placeholder="Mô tả tóm tắt nội dung nghiên cứu, công nghệ áp dụng..."
                             value={formData.moTa || ''}
                             onChange={(e) => setFormData({ ...formData, moTa: e.target.value })}
-                            className="w-full px-3.5 py-2 border border-gray-300 rounded-lg text-xs focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 focus:outline-none transition"
+                            className="w-full px-2.5 py-1.5 border border-gray-300 bg-white text-xs focus:outline-none font-sans"
                         />
                     </div>
 
-                    <div className="flex items-center justify-end gap-2 pt-3 border-t border-gray-100">
+                    <div className="flex items-center justify-end gap-2 pt-2 border-t border-gray-200">
                         <button
                             type="button"
                             onClick={() => setIsModalOpen(false)}
-                            className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg text-xs font-medium hover:bg-gray-50 transition"
+                            className="px-3 py-1.5 border border-gray-300 bg-white hover:bg-gray-100 text-gray-700 text-xs cursor-pointer"
                         >
-                            Hủy bỏ
+                            [Hủy bỏ]
                         </button>
                         <button
                             type="submit"
                             disabled={submitting}
-                            className="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-lg text-xs font-semibold transition disabled:opacity-50 shadow-xs"
+                            className="px-3 py-1.5 border border-gray-900 bg-gray-900 hover:bg-gray-800 text-white text-xs font-bold disabled:opacity-50 cursor-pointer"
                         >
-                            {submitting ? 'Đang gửi HTTP...' : editingItem ? 'Lưu thay đổi' : 'Thêm đề tài'}
+                            {submitting ? '[Đang lưu...]' : editingItem ? '[Lưu thay đổi]' : '[Thêm đề tài]'}
                         </button>
                     </div>
                 </form>

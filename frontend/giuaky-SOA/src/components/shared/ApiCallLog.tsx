@@ -23,46 +23,45 @@ export const ApiCallLog: React.FC = () => {
         return log.serviceName.toLowerCase().includes(filterService.toLowerCase());
     });
 
-    const getMethodColor = (method: string) => {
+    const getMethodBadge = (method: string) => {
         switch (method) {
             case 'GET':
-                return 'bg-blue-100 text-blue-800 border-blue-200';
+                return 'text-blue-400 border border-blue-500/40 bg-blue-950/40';
             case 'POST':
-                return 'bg-emerald-100 text-emerald-800 border-emerald-200';
+                return 'text-emerald-400 border border-emerald-500/40 bg-emerald-950/40';
             case 'PUT':
-                return 'bg-amber-100 text-amber-800 border-amber-200';
+                return 'text-amber-400 border border-amber-500/40 bg-amber-950/40';
             case 'DELETE':
-                return 'bg-rose-100 text-rose-800 border-rose-200';
+                return 'text-rose-400 border border-rose-500/40 bg-rose-950/40';
             default:
-                return 'bg-gray-100 text-gray-800 border-gray-200';
+                return 'text-gray-300 border border-gray-600 bg-gray-800';
         }
     };
 
     const getStatusBadge = (log: ApiLogEntry) => {
         if (log.status === 'pending') {
             return (
-                <span className="inline-flex items-center gap-1 text-xs font-mono font-medium text-amber-600 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
-                    <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-ping" />
+                <span className="text-[11px] font-mono text-amber-300 border border-amber-500/50 px-1.5 py-0.2">
                     SENDING...
                 </span>
             );
         }
         if (log.isMock) {
             return (
-                <span className="inline-flex items-center text-xs font-mono font-medium text-purple-700 bg-purple-50 px-2 py-0.5 rounded border border-purple-200">
-                    200 (MOCK)
+                <span className="text-[11px] font-mono text-amber-400 border border-amber-500/40 bg-amber-950/30 px-1.5 py-0.2">
+                    MOCK (200)
                 </span>
             );
         }
         if (log.status === 'success') {
             return (
-                <span className="inline-flex items-center text-xs font-mono font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                <span className="text-[11px] font-mono font-bold text-emerald-400 border border-emerald-500/50 bg-emerald-950/30 px-1.5 py-0.2">
                     {log.statusCode || 200} OK
                 </span>
             );
         }
         return (
-            <span className="inline-flex items-center text-xs font-mono font-semibold text-rose-700 bg-rose-50 px-2 py-0.5 rounded border border-rose-200">
+            <span className="text-[11px] font-mono font-bold text-rose-400 border border-rose-500/50 bg-rose-950/30 px-1.5 py-0.2">
                 {log.statusCode || 'ERR'}
             </span>
         );
@@ -70,107 +69,100 @@ export const ApiCallLog: React.FC = () => {
 
     return (
         <>
-            {/* Nút bấm nổi ở góc dưới để bật / tắt bảng Log API SOA */}
-            <div className="fixed bottom-4 right-4 z-40">
+            {/* Toggle button text-only ở góc dưới bên phải */}
+            <div className="fixed bottom-3 right-3 z-40">
                 <button
+                    type="button"
                     onClick={() => setIsOpen(!isOpen)}
-                    className="flex items-center gap-2 px-3.5 py-2.5 bg-gray-900 hover:bg-gray-800 text-white rounded-xl shadow-lg border border-gray-700 transition font-medium text-xs sm:text-sm"
+                    className="px-3 py-1.5 bg-gray-900 hover:bg-black text-gray-200 border-2 border-gray-600 text-xs font-mono font-bold flex items-center gap-2 cursor-pointer shadow-sm"
                 >
-                    <span className="relative flex h-2.5 w-2.5">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                        <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
-                    </span>
-                    <span>SOA REST Logs</span>
-                    <span className="bg-gray-700 text-gray-200 text-xs px-1.5 py-0.2 rounded-full font-mono">
-                        {logs.length}
-                    </span>
-                    <span className="text-gray-400">{isOpen ? '▼' : '▲'}</span>
+                    <span className="w-2 h-2 bg-emerald-400 inline-block" />
+                    <span>REST API LOGS [{logs.length}]</span>
+                    <span>{isOpen ? '[-]' : '[+]'}</span>
                 </button>
             </div>
 
-            {/* Panel bảng log */}
+            {/* Console Panel Wireframe */}
             {isOpen && (
-                <div className="fixed bottom-16 right-4 w-[92vw] sm:w-[650px] max-h-[550px] bg-gray-950 text-gray-100 rounded-2xl shadow-2xl border border-gray-800 flex flex-col z-50 overflow-hidden font-sans">
+                <div className="fixed bottom-12 right-3 w-[95vw] sm:w-[720px] max-h-[560px] bg-gray-950 text-gray-200 border-2 border-gray-600 flex flex-col z-50 font-mono text-xs shadow-2xl">
                     {/* Header */}
-                    <div className="flex items-center justify-between px-4 py-3 bg-gray-900 border-b border-gray-800">
+                    <div className="flex items-center justify-between px-3 py-2 bg-gray-900 border-b border-gray-700">
                         <div className="flex items-center gap-2">
-                            <span className="text-sm font-bold text-white tracking-wide">
-                                📡 Giám sát HTTP / REST Microservices
+                            <span className="font-bold text-gray-100">
+                                [DEV CONSOLE: HTTP / REST MONITOR]
                             </span>
-                            <span className="text-xs bg-blue-900/60 text-blue-300 border border-blue-700/50 px-2 py-0.5 rounded">
-                                Realtime SOA
+                            <span className="text-[10px] text-gray-400">
+                                (5 Services SOA)
                             </span>
                         </div>
                         <div className="flex items-center gap-2">
                             <button
+                                type="button"
                                 onClick={() => apiLogger.clearLogs()}
-                                className="text-xs text-gray-400 hover:text-white px-2 py-1 bg-gray-800 hover:bg-gray-700 rounded transition"
-                                title="Xóa lịch sử log"
+                                className="px-2 py-0.5 border border-gray-600 hover:bg-gray-800 text-gray-300 text-[11px] cursor-pointer"
                             >
-                                Xóa
+                                [Xóa logs]
                             </button>
                             <button
+                                type="button"
                                 onClick={() => setIsOpen(false)}
-                                className="text-gray-400 hover:text-white p-1 rounded hover:bg-gray-800 text-sm font-bold"
+                                className="px-2 py-0.5 border border-gray-600 hover:bg-gray-800 text-gray-300 text-[11px] cursor-pointer font-bold"
                             >
-                                ✕
+                                [Đóng]
                             </button>
                         </div>
                     </div>
 
                     {/* Filter bar */}
-                    <div className="flex items-center gap-2 px-4 py-2 bg-gray-900/60 border-b border-gray-800/80 text-xs">
-                        <span className="text-gray-400">Lọc dịch vụ:</span>
+                    <div className="flex items-center gap-1 px-3 py-1.5 bg-gray-900/60 border-b border-gray-800 text-[11px] overflow-x-auto">
+                        <span className="text-gray-400 mr-1">Lọc:</span>
                         {['all', 'Auth', 'DeTai', 'SinhVien', 'GiangVien', 'DangKy'].map((svc) => (
                             <button
                                 key={svc}
+                                type="button"
                                 onClick={() => setFilterService(svc)}
-                                className={`px-2 py-1 rounded transition text-xs font-mono ${
+                                className={`px-2 py-0.5 border text-[11px] cursor-pointer ${
                                     filterService === svc
-                                        ? 'bg-blue-600 text-white font-medium'
-                                        : 'bg-gray-800 text-gray-400 hover:text-gray-200'
+                                        ? 'bg-gray-200 text-black border-white font-bold'
+                                        : 'bg-gray-800 text-gray-300 border-gray-700 hover:bg-gray-700'
                                 }`}
                             >
-                                {svc}
+                                [{svc}]
                             </button>
                         ))}
                     </div>
 
                     {/* Danh sách log */}
-                    <div className="flex-1 overflow-y-auto divide-y divide-gray-800/60 max-h-[300px]">
+                    <div className="flex-1 overflow-y-auto divide-y divide-gray-800 max-h-[260px] bg-black/40">
                         {filteredLogs.length === 0 ? (
-                            <div className="p-8 text-center text-gray-500 text-xs">
-                                Chưa có request HTTP/REST nào được gửi. Hãy thao tác trên các màn hình để quan sát các lệnh gọi API qua mạng.
+                            <div className="p-6 text-center text-gray-500 text-xs">
+                                [Chưa có HTTP Request nào được ghi nhận. Thao tác trên giao diện để xem các lời gọi API]
                             </div>
                         ) : (
                             filteredLogs.map((log) => (
                                 <div
                                     key={log.id}
                                     onClick={() => setSelectedLog(log)}
-                                    className={`px-4 py-2.5 hover:bg-gray-900/80 cursor-pointer transition flex items-center justify-between text-xs font-mono gap-2 ${
-                                        selectedLog?.id === log.id ? 'bg-blue-950/40 border-l-2 border-blue-500' : ''
+                                    className={`px-3 py-1.5 hover:bg-gray-800/80 cursor-pointer flex items-center justify-between gap-2 ${
+                                        selectedLog?.id === log.id ? 'bg-gray-800 border-l-4 border-emerald-400' : ''
                                     }`}
                                 >
                                     <div className="flex items-center gap-2 min-w-0 flex-1">
-                                        <span className="text-gray-500 text-[11px]">{log.timestamp}</span>
-                                        <span
-                                            className={`px-1.5 py-0.5 rounded text-[11px] font-bold border ${getMethodColor(
-                                                log.method
-                                            )}`}
-                                        >
+                                        <span className="text-gray-500 text-[10px]">{log.timestamp}</span>
+                                        <span className={`px-1.5 py-0.2 text-[10px] font-bold ${getMethodBadge(log.method)}`}>
                                             {log.method}
                                         </span>
-                                        <span className="text-gray-300 font-semibold truncate max-w-[240px]" title={log.url}>
+                                        <span className="text-gray-300 font-semibold truncate max-w-[280px]" title={log.url}>
                                             {log.url}
                                         </span>
-                                        <span className="text-[10px] text-gray-400 px-1.5 py-0.5 rounded bg-gray-800">
+                                        <span className="text-[10px] text-gray-400 px-1 border border-gray-700 bg-gray-900">
                                             {log.serviceName}
                                         </span>
                                     </div>
 
                                     <div className="flex items-center gap-2 shrink-0">
                                         {log.responseTimeMs !== undefined && (
-                                            <span className="text-[11px] text-gray-400">
+                                            <span className="text-[10px] text-gray-400">
                                                 {log.responseTimeMs}ms
                                             </span>
                                         )}
@@ -181,36 +173,37 @@ export const ApiCallLog: React.FC = () => {
                         )}
                     </div>
 
-                    {/* Chi tiết request / response đã chọn */}
+                    {/* Chi tiết log được chọn */}
                     {selectedLog && (
-                        <div className="p-3 bg-gray-900 border-t border-gray-800 text-xs max-h-[180px] overflow-y-auto">
-                            <div className="flex justify-between items-center mb-1 text-gray-400 font-mono text-[11px]">
-                                <span>
-                                    CHI TIẾT: {selectedLog.method} {selectedLog.url} ({selectedLog.serviceName})
+                        <div className="p-3 bg-gray-900 border-t border-gray-700 text-xs max-h-[200px] overflow-y-auto">
+                            <div className="flex justify-between items-center mb-1.5 text-gray-400 text-[11px] pb-1 border-b border-gray-800">
+                                <span className="font-bold text-gray-200">
+                                    INSPECTOR: {selectedLog.method} {selectedLog.url} ({selectedLog.serviceName})
                                 </span>
                                 <button
+                                    type="button"
                                     onClick={() => setSelectedLog(null)}
-                                    className="text-gray-400 hover:text-white"
+                                    className="text-gray-400 hover:text-white cursor-pointer"
                                 >
-                                    Đóng
+                                    [Thu nhỏ]
                                 </button>
                             </div>
 
                             {Boolean(selectedLog.requestBody) && (
                                 <div className="mb-2">
-                                    <div className="text-[11px] font-semibold text-gray-400 mb-0.5">Request Body:</div>
-                                    <pre className="bg-black/60 p-2 rounded text-emerald-400 font-mono text-[11px] overflow-x-auto">
+                                    <div className="text-[10px] font-bold text-gray-400 mb-0.5">REQUEST PAYLOAD:</div>
+                                    <pre className="bg-black p-2 border border-gray-800 text-emerald-400 text-[11px] overflow-x-auto whitespace-pre-wrap">
                                         {JSON.stringify(selectedLog.requestBody, null, 2)}
                                     </pre>
                                 </div>
                             )}
 
                             <div>
-                                <div className="text-[11px] font-semibold text-gray-400 mb-0.5">Response:</div>
-                                <pre className="bg-black/60 p-2 rounded text-blue-300 font-mono text-[11px] overflow-x-auto">
+                                <div className="text-[10px] font-bold text-gray-400 mb-0.5">RESPONSE BODY:</div>
+                                <pre className="bg-black p-2 border border-gray-800 text-blue-300 text-[11px] overflow-x-auto whitespace-pre-wrap">
                                     {selectedLog.responseBody
                                         ? JSON.stringify(selectedLog.responseBody, null, 2)
-                                        : selectedLog.errorMessage || '(Không có nội dung)'}
+                                        : selectedLog.errorMessage || '(Rỗng)'}
                                 </pre>
                             </div>
                         </div>
