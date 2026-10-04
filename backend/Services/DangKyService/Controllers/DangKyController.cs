@@ -11,14 +11,21 @@ public class DangKyController(
 
 	private readonly DangKyServiceImpl dangKyServiceImpl = dangKyServiceImpl;
 
+	[HttpGet]
+	public async Task<IActionResult> getList() {
+		List<DangKyResponseDto> response = await dangKyServiceImpl.getList();
+
+		return Ok(response);
+	}
+
 	[HttpPost]
-	public async Task<IActionResult> Register(
-		[FromBody] DangKyDto dangKyDto
+	public async Task<IActionResult> create(
+		[FromBody] DangKyRequestDto request
 	) {
-		Console.WriteLine(dangKyDto.sinhVienId);
-		Console.WriteLine(dangKyDto.deTaiId);
-		Console.WriteLine(dangKyDto.giangVienId);
-		DangKyDto? response = await dangKyServiceImpl.create(dangKyDto);
+		Console.WriteLine(request.sinhVienId);
+		Console.WriteLine(request.deTaiId);
+		Console.WriteLine(request.giangVienId);
+		DangKyResponseDto? response = await dangKyServiceImpl.create(request);
 
 		if (response is null) {
 			return BadRequest();
