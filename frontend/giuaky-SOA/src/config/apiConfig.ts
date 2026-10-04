@@ -63,7 +63,7 @@ export const DEFAULT_SERVICE_CONFIG: Record<string, ServiceEndpointConfig> = {
         port: 7004,
         color: '#9333ea', // purple
         description: 'Quản lý thông tin giảng viên hướng dẫn, bộ môn và học vị',
-        isImplemented: false,
+        isImplemented: true,
     },
     deTai: {
         key: 'deTai',
