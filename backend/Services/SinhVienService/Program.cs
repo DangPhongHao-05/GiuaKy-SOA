@@ -1,7 +1,19 @@
+using Microsoft.EntityFrameworkCore;
+using SinhVienService.Data;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+builder.Services.AddControllers();
+var supabaseConnectionString = builder.Configuration.GetConnectionString("Supabase");
+if (string.IsNullOrWhiteSpace(supabaseConnectionString))
+{
+    throw new InvalidOperationException(
+        "Missing Supabase database connection string. Configure ConnectionStrings__Supabase.");
+}
+
+builder.Services.AddDbContext<SinhVienDbContext>(options =>
+    options.UseNpgsql(supabaseConnectionString));
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
@@ -13,29 +25,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
+app.MapControllers();
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
