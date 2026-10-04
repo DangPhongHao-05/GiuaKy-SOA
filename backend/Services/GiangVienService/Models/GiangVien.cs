@@ -14,6 +14,15 @@ namespace GiangVienService.Models
         [MaxLength(50)]
         public string MaGV { get; set; } = string.Empty;
 
+        // Định danh Id kiểu string ánh xạ song song với MaGV
+        [NotMapped]
+        [JsonPropertyName("id")]
+        public string Id
+        {
+            get => MaGV;
+            set => MaGV = value;
+        }
+
         [Column("ho_ten")]
         [JsonPropertyName("hoTen")]
         [Required(ErrorMessage = "Họ tên giảng viên không được để trống")]

@@ -6,10 +6,10 @@ namespace GiangVienService.Services.Interfaces
     public interface IGiangVienService
     {
         Task<IEnumerable<GiangVien>> GetAllAsync();
-        Task<GiangVien?> GetByMaGvAsync(string maGv);
+        Task<GiangVien?> GetByIdAsync(string id);
         Task<GiangVien> CreateAsync(CreateGiangVienDto dto);
-        Task<GiangVien?> UpdateAsync(string maGv, UpdateGiangVienDto dto);
-        Task<bool> DeleteAsync(string maGv);
-        Task<bool> ExistsAsync(string maGv);
+        Task<GiangVien?> UpdateAsync(string id, UpdateGiangVienDto dto);
+        Task<bool> DeleteAsync(string id);
+        Task<bool> ExistsAsync(string id);
     }
 }

@@ -23,18 +23,25 @@ namespace GiangVienService.Services.Implements
                 .ToListAsync();
         }
 
-        public async Task<GiangVien?> GetByMaGvAsync(string maGv)
+        public async Task<GiangVien?> GetByIdAsync(string id)
         {
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                return null;
+            }
+
             return await _context.GiangViens
                 .AsNoTracking()
-                .FirstOrDefaultAsync(g => g.MaGV == maGv);
+                .FirstOrDefaultAsync(g => g.MaGV == id.Trim());
         }
 
         public async Task<GiangVien> CreateAsync(CreateGiangVienDto dto)
         {
+            var gvId = (!string.IsNullOrWhiteSpace(dto.Id) ? dto.Id : dto.MaGV ?? string.Empty).Trim();
+
             var entity = new GiangVien
             {
-                MaGV = dto.MaGV.Trim(),
+                MaGV = gvId,
                 HoTen = dto.HoTen.Trim(),
                 Email = dto.Email.Trim(),
                 BoMon = dto.BoMon?.Trim(),
@@ -47,9 +54,14 @@ namespace GiangVienService.Services.Implements
             return entity;
         }
 
-        public async Task<GiangVien?> UpdateAsync(string maGv, UpdateGiangVienDto dto)
+        public async Task<GiangVien?> UpdateAsync(string id, UpdateGiangVienDto dto)
         {
-            var existing = await _context.GiangViens.FirstOrDefaultAsync(g => g.MaGV == maGv);
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                return null;
+            }
+
+            var existing = await _context.GiangViens.FirstOrDefaultAsync(g => g.MaGV == id.Trim());
             if (existing == null)
             {
                 return null;
@@ -79,9 +91,14 @@ namespace GiangVienService.Services.Implements
             return existing;
         }
 
-        public async Task<bool> DeleteAsync(string maGv)
+        public async Task<bool> DeleteAsync(string id)
         {
-            var existing = await _context.GiangViens.FirstOrDefaultAsync(g => g.MaGV == maGv);
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                return false;
+            }
+
+            var existing = await _context.GiangViens.FirstOrDefaultAsync(g => g.MaGV == id.Trim());
             if (existing == null)
             {
                 return false;
@@ -92,9 +109,14 @@ namespace GiangVienService.Services.Implements
             return true;
         }
 
-        public async Task<bool> ExistsAsync(string maGv)
+        public async Task<bool> ExistsAsync(string id)
         {
-            return await _context.GiangViens.AnyAsync(g => g.MaGV == maGv);
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                return false;
+            }
+
+            return await _context.GiangViens.AnyAsync(g => g.MaGV == id.Trim());
         }
     }
 }

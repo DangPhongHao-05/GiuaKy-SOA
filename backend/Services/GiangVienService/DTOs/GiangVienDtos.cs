@@ -5,10 +5,13 @@ namespace GiangVienService.DTOs
 {
     public class CreateGiangVienDto
     {
-        [Required(ErrorMessage = "Mã giảng viên không được để trống")]
+        [MaxLength(50)]
+        [JsonPropertyName("id")]
+        public string? Id { get; set; }
+
         [MaxLength(50)]
         [JsonPropertyName("maGV")]
-        public string MaGV { get; set; } = string.Empty;
+        public string? MaGV { get; set; }
 
         [Required(ErrorMessage = "Họ tên giảng viên không được để trống")]
         [MaxLength(200)]
