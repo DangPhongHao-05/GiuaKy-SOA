@@ -26,7 +26,7 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 // 3. Tự động chuyển hướng trang chủ (http://localhost:5003/) sang API lấy danh sách đề tài
-app.MapGet("/", () => Results.Redirect("/api/DeTai"));
+//app.MapGet("/", () => Results.Redirect("/api/DeTai"));
 
 // 4. Định tuyến đến các Controller (CRUD)
 app.MapControllers();
