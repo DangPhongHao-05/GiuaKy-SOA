@@ -197,7 +197,7 @@ Cần cài đặt:
 - .NET SDK
 - Node.js
 - npm
-- SQL Server
+- SQL Server or Supabase
 - SQL Server Management Studio
 - Visual Studio
 - Visual Studio Code
@@ -324,7 +324,7 @@ Frontend sẽ kết nối đến các Backend Service thông qua REST API.
 
 | Thành viên            | Công việc                   |
 | --------------------- | --------------------------- |
-| Đặng Phong Hào        | AuthService                 |
+| Đặng Phong Hào        | AuthService + Frontend      |
 | Tô Hoàng Hào          | SinhVienService             |
 | Bùi Thế Sơn           | GiangVienService + Frontend |
 | Phạm Hoàng An Khang   | DeTaiService                |

@@ -1,0 +1,19 @@
+/* Base Wireframe / Technical Mockup Styles */
+:root {
+    --wireframe-border: #cbd5e1;
+    --wireframe-bg-subtle: #f8fafc;
+}
+
+/* Sharp focus indicators without heavy glowing outlines */
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+    outline: 2px solid #0f172a;
+    outline-offset: 1px;
+}
+
+/* Dense table cell typography */
+table {
+    border-collapse: collapse;
+}
