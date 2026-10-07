@@ -5,6 +5,7 @@
         public string Email { get; set; } = null!;
         public string Password { get; set; } = null!;
         public string? FullName { get; set; }
+        public string MaSv { get; set; } = null!;
     }
 
     public class LoginRequest
@@ -29,5 +30,12 @@
     {
         public bool Success { get; set; }
         public string Message { get; set; } = string.Empty;
+    }
+
+    public class SinhVienCreateRequest
+    {
+        public string MaSv { get; set; } = string.Empty;
+        public string HoTen { get; set; } = string.Empty;
+        public string? Email { get; set; }
     }
 }

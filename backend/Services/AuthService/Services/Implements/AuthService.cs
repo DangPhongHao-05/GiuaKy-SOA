@@ -1,5 +1,6 @@
 ﻿using AuthService.DTOs;
 using AuthService.Models.Generated;
+using AuthService.Services.Implements.External;
 using AuthService.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,12 +11,14 @@ namespace AuthService.Services.Implements
         private readonly AppDbContext _context;
         private readonly IEmailService _emailService;
         private readonly IConfiguration _config;
+        private readonly SinhVienExternalService _sinhVienExternalService;
 
-        public AuthServiceApp (AppDbContext context, IEmailService emailService, IConfiguration config)
+        public AuthServiceApp (AppDbContext context, IEmailService emailService, IConfiguration config, SinhVienExternalService sinhVienExternalService)
         {
             _context = context;
             _emailService = emailService;
             _config = config;
+            _sinhVienExternalService = sinhVienExternalService;
         }
 
         public async Task<AuthResponse> RegisterAsync(RegisterRequest request)
@@ -33,13 +36,55 @@ namespace AuthService.Services.Implements
                 Email = request.Email,
                 FullName = request.FullName,
                 PasswordHash = passwordHash,
-                IsEmailVerified = false
+                IsEmailVerified = false,
+                Role = "SinhVien"
             };
 
-            _context.Users.Add(newAccount);
-            await _context.SaveChangesAsync();
+            // 1. KHỞI TẠO TRANSACTION ĐỂ ĐẢM BẢO TÍNH TOÀN VẸN DỮ LIỆU
+            using var transaction = await _context.Database.BeginTransactionAsync();
 
-            return new AuthResponse { Success = true, Message = "Đăng ký thành công!" };
+            try
+            {
+                _context.Users.Add(newAccount);
+                await _context.SaveChangesAsync(); // Lưu tạm thời tài khoản vào DB
+
+                // Mapping dữ liệu chuẩn bị gửi sang SinhVienService
+                var sinhVienRequest = new SinhVienCreateRequest
+                {
+                    MaSv = request.MaSv,
+                    HoTen = request.FullName,
+                    Email = request.Email
+                };
+
+                // 2. GỌI SANG EXTERNAL SERVICE
+                bool isSinhVienCreated = await _sinhVienExternalService.CreateSinhVienAsync(sinhVienRequest);
+
+                // 3. KIỂM TRA KẾT QUẢ VÀ QUYẾT ĐỊNH ROLLBACK HAY COMMIT
+                if (!isSinhVienCreated)
+                {
+                    // Lỗi: Hủy bỏ việc tạo tài khoản vừa rồi!
+                    await transaction.RollbackAsync();
+                    return new AuthResponse
+                    {
+                        Success = false, // Chuyển thành false để Frontend báo lỗi màu đỏ
+                        Message = "Đăng ký thất bại: Không thể tạo hồ sơ Sinh viên (Mã SV có thể đã tồn tại hoặc dịch vụ đang lỗi)."
+                    };
+                }
+
+                // Thành công: Xác nhận lưu vĩnh viễn vào DB
+                await transaction.CommitAsync();
+                return new AuthResponse { Success = true, Message = "Đăng ký thành công!" };
+            }
+            catch (Exception)
+            {
+                // Có lỗi không mong muốn (vd: sập mạng khi đang call SinhVienService) -> Hủy tạo tài khoản
+                await transaction.RollbackAsync();
+                return new AuthResponse
+                {
+                    Success = false,
+                    Message = "Lỗi hệ thống trong quá trình đăng ký. Yêu cầu đã bị hủy."
+                };
+            }
         }
 
         public async Task<AuthResponse> LoginAsync(LoginRequest request)

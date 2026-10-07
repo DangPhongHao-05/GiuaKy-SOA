@@ -25,6 +25,11 @@ builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
+builder.Services.AddHttpClient<AuthService.Services.Implements.External.SinhVienExternalService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7005");
+});
+
 //Đăng ký Dependency Injection cho Service
 builder.Services.AddScoped<IAuthService, AuthServiceApp>();
 builder.Services.AddScoped<IEmailService, EmailService>();

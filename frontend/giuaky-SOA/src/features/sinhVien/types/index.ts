@@ -1,10 +1,13 @@
 export interface SinhVien {
-    maSV: string;
-    hoTen: string;
-    email: string;
-    khoa: string;
-    nienKhoa: string;
+  id: number;
+  maSv: string;
+  hoTen: string;
+  ngaySinh?: string | null;
+  lop?: string | null;
+  email?: string | null;
+  phone?: string | null;
 }
 
-export type CreateSinhVienDto = SinhVien;
-export type UpdateSinhVienDto = Partial<Omit<SinhVien, 'maSV'>>;
+// Khi tạo mới không cần truyền id
+export type CreateSinhVienDto = Omit<SinhVien, "id">;
+export type UpdateSinhVienDto = SinhVien;

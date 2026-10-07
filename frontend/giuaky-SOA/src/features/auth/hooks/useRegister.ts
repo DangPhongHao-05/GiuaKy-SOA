@@ -7,6 +7,7 @@ export const useRegister = () => {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [fullName, setFullName] = useState('');
+    const [studentId, setStudentId] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [successMsg, setSuccessMsg] = useState('');
@@ -14,7 +15,7 @@ export const useRegister = () => {
 
     const handleRegister = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!email || !password || !confirmPassword || !fullName) {
+        if (!email || !password || !confirmPassword || !fullName || !studentId) {
             setError('Vui lòng điền đầy đủ tất cả các trường.');
             return;
         }
@@ -30,7 +31,7 @@ export const useRegister = () => {
         setSuccessMsg('');
 
         try {
-            const res = await authApi.register({ email, password, fullName });
+            const res = await authApi.register({ email, password, fullName, studentId });
             setSuccessMsg(res.message || 'Đăng ký tài khoản thành công! Đang chuyển hướng...');
             setTimeout(() => {
                 navigate('/');
@@ -52,6 +53,8 @@ export const useRegister = () => {
         setConfirmPassword,
         fullName,
         setFullName,
+        studentId,
+        setStudentId,
         loading,
         error,
         successMsg,
