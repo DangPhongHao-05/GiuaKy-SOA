@@ -6,6 +6,7 @@ import type {
   RegisterPayload,
   TokenResponse,
   VerifyOtpPayload,
+  RefreshTokenPayload,
 } from "../types";
 
 const getEndpoints = () => {
@@ -14,6 +15,7 @@ const getEndpoints = () => {
     login: config.endpoints.login || "/Auth/login",
     register: config.endpoints.register || "/Auth/register",
     verifyOtp: config.endpoints.verifyOtp || "/Auth/verify-otp",
+    refreshToken: config.endpoints.refreshToken || "/Auth/refresh-token",
   };
 };
 
@@ -61,6 +63,17 @@ export const authApi = {
     const response = await authClient.post<AuthResponse>(
       endpoints.register,
       dataToSend,
+    );
+    return response.data;
+  },
+
+  refreshToken: async (
+    payload: RefreshTokenPayload,
+  ): Promise<TokenResponse> => {
+    const endpoints = getEndpoints();
+    const response = await authClient.post<TokenResponse>(
+      endpoints.refreshToken,
+      payload,
     );
     return response.data;
   },

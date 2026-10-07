@@ -1,5 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using SinhVienService.Data;
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +20,32 @@ if (string.IsNullOrWhiteSpace(supabaseConnectionString))
 
 builder.Services.AddDbContext<SinhVienDbContext>(options =>
     options.UseNpgsql(supabaseConnectionString));
+
+var jwtConfig = builder.Configuration.GetSection("Authentication:Jwt");
+var secretKey = Encoding.UTF8.GetBytes(jwtConfig["Secret"] ?? "ChuoiBiMatSieuCapVipProDoAnTotNghiep123!@#");
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = jwtConfig["Issuer"] ?? "Auth",
+        ValidAudience = jwtConfig["Audience"] ?? "AuthClient",
+        IssuerSigningKey = new SymmetricSecurityKey(secretKey),
+        ClockSkew = TimeSpan.Zero
+    };
+});
+
+builder.Services.AddAuthorization();
+
 
 builder.Services.AddCors(options =>
 {
@@ -40,6 +69,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors("AllowReactApp");
 // app.UseHttpsRedirection();
+app.UseAuthentication();
+app.UseAuthorization();
 app.MapControllers();
 
 app.Run();

@@ -1,6 +1,7 @@
 using GiangVienService.DTOs;
 using GiangVienService.Models;
 using GiangVienService.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GiangVienService.Controllers

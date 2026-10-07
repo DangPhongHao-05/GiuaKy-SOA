@@ -25,3 +25,8 @@ export interface RegisterPayload {
     fullName: string;
     studentId: string;
 }
+
+export interface RefreshTokenPayload {
+  userId: string;
+  refreshToken: string;
+}

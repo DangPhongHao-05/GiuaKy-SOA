@@ -38,4 +38,10 @@
         public string HoTen { get; set; } = string.Empty;
         public string? Email { get; set; }
     }
+
+    public class RefreshTokenRequest
+    {
+        public Guid UserId { get; set; }
+        public string RefreshToken { get; set; } = string.Empty;
+    }
 }

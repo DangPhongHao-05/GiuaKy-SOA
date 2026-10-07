@@ -143,6 +143,67 @@ namespace AuthService.Services.Implements
             };
         }
 
+        public async Task<TokenResponse> RefreshTokenAsync(RefreshTokenRequest request)
+        {
+            // 1. Kiểm tra User có tồn tại không
+            var user = await _context.Users.FindAsync(request.UserId);
+            if (user == null)
+            {
+                return new TokenResponse { Success = false, Message = "Người dùng không tồn tại." };
+            }
+
+            // 2. Lấy tất cả Refresh Tokens CÒN HẠN của User này
+            var activeTokens = await _context.RefreshTokens
+                .Where(rt => rt.UserId == request.UserId && rt.ExpiresAt >= DateTime.UtcNow)
+                .ToListAsync();
+
+            if (!activeTokens.Any())
+            {
+                return new TokenResponse { Success = false, Message = "Không có token nào hợp lệ. Vui lòng đăng nhập lại." };
+            }
+
+            // 3. Dùng BCrypt để verify xem token gửi lên khớp với mã hash nào trong DB
+            RefreshToken? validTokenEntity = null;
+            foreach (var rt in activeTokens)
+            {
+                if (BCrypt.Net.BCrypt.Verify(request.RefreshToken, rt.TokenHash))
+                {
+                    validTokenEntity = rt;
+                    break;
+                }
+            }
+
+            if (validTokenEntity == null)
+            {
+                return new TokenResponse { Success = false, Message = "Refresh Token không chính xác hoặc đã bị thu hồi." };
+            }
+
+            // 4. Thu hồi Token cũ (Refresh Token Rotation)
+            _context.RefreshTokens.Remove(validTokenEntity);
+
+            // 5. Sinh cặp Token mới
+            var newAccessToken = GenerateJwtToken(user);
+            var newRefreshToken = GenerateRefreshToken();
+
+            var newRefreshTokenEntity = new RefreshToken
+            {
+                UserId = user.Id,
+                TokenHash = BCrypt.Net.BCrypt.HashPassword(newRefreshToken),
+                ExpiresAt = DateTime.UtcNow.AddDays(double.Parse(_config["Authentication:Jwt:RefreshTokenExpirationDays"] ?? "7"))
+            };
+
+            _context.RefreshTokens.Add(newRefreshTokenEntity);
+            await _context.SaveChangesAsync();
+
+            return new TokenResponse
+            {
+                Success = true,
+                Message = "Làm mới Token thành công.",
+                AccessToken = newAccessToken,
+                RefreshToken = newRefreshToken
+            };
+        }
+
         private string GenerateJwtToken(User user)
         {
             var secretKey = _config["Authentication:Jwt:Secret"];
