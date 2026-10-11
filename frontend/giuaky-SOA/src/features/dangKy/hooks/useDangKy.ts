@@ -2,14 +2,17 @@ import { useState, useEffect, useCallback } from 'react';
 import { dangKyApi } from '../api';
 import { sinhVienApi } from '../../sinhVien/api';
 import { deTaiApi } from '../../deTai/api';
-import type { DangKy, CreateDangKyDto, UpdateDangKyDto } from '../types';
+import { giangVienApi } from '../../giangVien/api';
+import type { DangKy, CreateDangKyDto } from '../types';
 import type { SinhVien } from '../../sinhVien/types';
 import type { DeTai } from '../../deTai/types';
+import type { GiangVien } from '../../giangVien/types';
 
 export function useDangKy() {
     const [dangKys, setDangKys] = useState<DangKy[]>([]);
     const [sinhViens, setSinhViens] = useState<SinhVien[]>([]);
     const [deTais, setDeTais] = useState<DeTai[]>([]);
+    const [giangViens, setGiangViens] = useState<GiangVien[]>([]);
     const [loading, setLoading] = useState(false);
     const [isLive, setIsLive] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -18,17 +21,19 @@ export function useDangKy() {
         setLoading(true);
         setError(null);
         try {
-            // SOA Integration: Fetch data concurrently from 3 independent microservices!
-            const [dangKyRes, sinhVienRes, deTaiRes] = await Promise.all([
+            // SOA Integration: Lấy dữ liệu đồng thời từ 4 microservices độc lập!
+            const [dangKyRes, sinhVienRes, deTaiRes, giangVienRes] = await Promise.all([
                 dangKyApi.getAll(),
                 sinhVienApi.getAll(),
                 deTaiApi.getAll(),
+                giangVienApi.getAll(),
             ]);
 
             setDangKys(dangKyRes.data);
             setIsLive(dangKyRes.isLive);
             setSinhViens(sinhVienRes.data);
             setDeTais(deTaiRes.data);
+            setGiangViens(giangVienRes.data);
         } catch (err: any) {
             setError(err.message || 'Lỗi khi tải dữ liệu đăng ký');
         } finally {
@@ -56,46 +61,15 @@ export function useDangKy() {
         }
     };
 
-    const updateDangKy = async (id: number, dto: UpdateDangKyDto) => {
-        setLoading(true);
-        setError(null);
-        try {
-            const res = await dangKyApi.update(id, dto);
-            setDangKys((prev) => prev.map((item) => (item.id === id ? res.data : item)));
-            setIsLive(res.isLive);
-            return res.data;
-        } catch (err: any) {
-            setError(err.message || 'Lỗi khi cập nhật đăng ký');
-            throw err;
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const deleteDangKy = async (id: number) => {
-        setLoading(true);
-        setError(null);
-        try {
-            await dangKyApi.delete(id);
-            setDangKys((prev) => prev.filter((item) => item.id !== id));
-        } catch (err: any) {
-            setError(err.message || 'Lỗi khi hủy đăng ký');
-            throw err;
-        } finally {
-            setLoading(false);
-        }
-    };
-
     return {
         dangKys,
         sinhViens,
         deTais,
+        giangViens,
         loading,
         isLive,
         error,
         fetchAllData,
         createDangKy,
-        updateDangKy,
-        deleteDangKy,
     };
 }

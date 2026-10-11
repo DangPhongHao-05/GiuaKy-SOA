@@ -25,6 +25,7 @@ export const DEFAULT_SERVICE_CONFIG: Record<string, ServiceEndpointConfig> = {
             login: '/Auth/login',
             register: '/Auth/register',
             verifyOtp: '/Auth/verify-otp',
+            refreshToken: '/Auth/refresh-token',
         },
         port: 7001,
         color: '#2563eb', // blue
@@ -89,15 +90,12 @@ export const DEFAULT_SERVICE_CONFIG: Record<string, ServiceEndpointConfig> = {
         baseURL: 'https://localhost:7002/api',
         endpoints: {
             getAll: '/DangKy',
-            getById: '/DangKy/:id',
             create: '/DangKy',
-            update: '/DangKy/:id',
-            delete: '/DangKy/:id',
         },
         port: 7002,
         color: '#dc2626', // red
-        description: 'Kết nối Sinh viên và Đề tài, quản lý quy trình xét duyệt đăng ký',
-        isImplemented: false,
+        description: 'Kết nối Sinh viên, Đề tài và Giảng viên hướng dẫn qua DangKyService (:7002)',
+        isImplemented: true,
     },
 };
 

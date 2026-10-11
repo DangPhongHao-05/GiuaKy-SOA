@@ -1,4 +1,5 @@
 export interface GiangVien {
+    id?: string;
     maGV: string;
     hoTen: string;
     email: string;
