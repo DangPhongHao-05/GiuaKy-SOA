@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom';
 interface RegisterProps {
     fullName: string;
     setFullName: (val: string) => void;
+    studentId: string;
+    setStudentId: (val: string) => void;
     email: string;
     setEmail: (val: string) => void;
     password: string;
@@ -19,6 +21,8 @@ interface RegisterProps {
 export const RegisterForm: React.FC<RegisterProps> = ({
     fullName,
     setFullName,
+    studentId,
+    setStudentId,
     email,
     setEmail,
     password,
@@ -65,6 +69,20 @@ export const RegisterForm: React.FC<RegisterProps> = ({
                         value={fullName}
                         onChange={(e) => setFullName(e.target.value)}
                         className="w-full px-2.5 py-1.5 border border-gray-300 bg-white text-xs focus:outline-none"
+                    />
+                </div>
+
+                <div>
+                    <label className="block font-bold text-gray-700 mb-1">
+                        Mã sinh viên
+                    </label>
+                    <input
+                        type="text"
+                        required
+                        placeholder="Ví dụ: 4351050001"
+                        value={studentId}
+                        onChange={(e) => setStudentId(e.target.value)}
+                        className="w-full px-2.5 py-1.5 border border-gray-300 bg-white text-xs font-mono focus:outline-none"
                     />
                 </div>
 

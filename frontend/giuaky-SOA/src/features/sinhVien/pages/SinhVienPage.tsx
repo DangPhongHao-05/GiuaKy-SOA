@@ -11,12 +11,14 @@ export const SinhVienPage: React.FC = () => {
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingItem, setEditingItem] = useState<SinhVien | null>(null);
+    
+    // Đã thay đổi fields theo Backend: maSv, hoTen, email, lop, phone
     const [formData, setFormData] = useState<CreateSinhVienDto>({
-        maSV: '',
+        maSv: '',
         hoTen: '',
         email: '',
-        khoa: 'Công nghệ thông tin',
-        nienKhoa: '2021 - 2025',
+        lop: '',
+        phone: '',
     });
     const [formError, setFormError] = useState('');
     const [submitting, setSubmitting] = useState(false);
@@ -24,11 +26,11 @@ export const SinhVienPage: React.FC = () => {
     const handleOpenAdd = () => {
         setEditingItem(null);
         setFormData({
-            maSV: '',
+            maSv: '',
             hoTen: '',
             email: '',
-            khoa: 'Công nghệ thông tin',
-            nienKhoa: '2021 - 2025',
+            lop: '',
+            phone: '',
         });
         setFormError('');
         setIsModalOpen(true);
@@ -36,15 +38,22 @@ export const SinhVienPage: React.FC = () => {
 
     const handleOpenEdit = (item: SinhVien) => {
         setEditingItem(item);
-        setFormData(item);
+        setFormData({
+            maSv: item.maSv,
+            hoTen: item.hoTen,
+            email: item.email || '',
+            lop: item.lop || '',
+            phone: item.phone || '',
+        });
         setFormError('');
         setIsModalOpen(true);
     };
 
     const handleDelete = async (item: SinhVien) => {
-        if (window.confirm(`Xác nhận xóa sinh viên "${item.hoTen}" (${item.maSV})?`)) {
+        if (window.confirm(`Xác nhận xóa sinh viên "${item.hoTen}" (${item.maSv})?`)) {
             try {
-                await deleteSinhVien(item.maSV);
+                // Đã đổi thành truyền id
+                await deleteSinhVien(item.id); 
             } catch (err: any) {
                 alert(err.message || 'Lỗi khi xóa sinh viên');
             }
@@ -53,8 +62,9 @@ export const SinhVienPage: React.FC = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!formData.maSV.trim() || !formData.hoTen.trim() || !formData.email.trim()) {
-            setFormError('Vui lòng điền đầy đủ Mã SV, Họ tên và Email');
+        // Cập nhật điều kiện check
+        if (!formData.maSv.trim() || !formData.hoTen.trim()) {
+            setFormError('Vui lòng điền đầy đủ Mã SV và Họ tên');
             return;
         }
 
@@ -63,11 +73,10 @@ export const SinhVienPage: React.FC = () => {
 
         try {
             if (editingItem) {
-                await updateSinhVien(editingItem.maSV, {
-                    hoTen: formData.hoTen,
-                    email: formData.email,
-                    khoa: formData.khoa,
-                    nienKhoa: formData.nienKhoa,
+                // Gọi API với id (số) làm khóa
+                await updateSinhVien(editingItem.id, {
+                    ...editingItem, // Kế thừa id
+                    ...formData,
                 });
             } else {
                 await createSinhVien(formData);
@@ -80,12 +89,13 @@ export const SinhVienPage: React.FC = () => {
         }
     };
 
+    // Đã đổi cột hiển thị thành Lớp và Điện thoại
     const columns: ColumnDef<SinhVien>[] = [
         {
             header: 'Mã SV',
-            key: 'maSV',
+            key: 'maSv',
             className: 'w-28 font-mono font-bold text-gray-900',
-            render: (item) => <span>{item.maSV}</span>,
+            render: (item) => <span>{item.maSv}</span>,
         },
         {
             header: 'Họ và tên',
@@ -99,13 +109,13 @@ export const SinhVienPage: React.FC = () => {
             ),
         },
         {
-            header: 'Khoa đào tạo',
-            key: 'khoa',
+            header: 'Lớp',
+            key: 'lop',
             className: 'text-gray-700',
         },
         {
-            header: 'Niên khóa',
-            key: 'nienKhoa',
+            header: 'Điện thoại',
+            key: 'phone',
             className: 'text-xs text-gray-600 font-mono w-32',
         },
     ];
@@ -128,24 +138,23 @@ export const SinhVienPage: React.FC = () => {
             )}
 
             <DataTable<SinhVien>
-                title="DANH SÁCH SINH VIÊN TỐT NGHIỆP"
+                title="DANH SÁCH SINH VIÊN"
                 description="Quản lý bởi SinhVienService (:7005) - Dữ liệu độc lập"
                 columns={columns}
                 data={sinhViens}
-                idKey="maSV"
+                idKey="id" // QUAN TRỌNG: Đổi idKey thành "id" thay vì "maSV"
                 loading={loading}
                 onAdd={handleOpenAdd}
                 onEdit={handleOpenEdit}
                 onDelete={handleDelete}
                 onRefresh={fetchSinhViens}
-                searchPlaceholder="Mã SV, họ tên hoặc khoa..."
-                searchKeys={['maSV', 'hoTen', 'email', 'khoa']}
+                searchPlaceholder="Mã SV, họ tên hoặc lớp..."
+                searchKeys={['maSv', 'hoTen', 'email', 'lop']} // Đổi search keys
             />
 
-            {/* Modal Wireframe */}
             <Modal
                 isOpen={isModalOpen}
-                title={editingItem ? `[CẬP NHẬT SINH VIÊN: ${editingItem.maSV}]` : '[THÊM SINH VIÊN MỚI]'}
+                title={editingItem ? `[CẬP NHẬT SINH VIÊN: ${editingItem.maSv}]` : '[THÊM SINH VIÊN MỚI]'}
                 onClose={() => setIsModalOpen(false)}
             >
                 <form onSubmit={handleSubmit} className="space-y-3 text-xs font-mono">
@@ -164,8 +173,8 @@ export const SinhVienPage: React.FC = () => {
                             required
                             disabled={!!editingItem}
                             placeholder="Ví dụ: 4451050099"
-                            value={formData.maSV}
-                            onChange={(e) => setFormData({ ...formData, maSV: e.target.value })}
+                            value={formData.maSv}
+                            onChange={(e) => setFormData({ ...formData, maSv: e.target.value })}
                             className="w-full px-2.5 py-1.5 border border-gray-300 bg-white text-xs font-mono focus:outline-none disabled:bg-gray-100"
                         />
                     </div>
@@ -186,39 +195,42 @@ export const SinhVienPage: React.FC = () => {
 
                     <div>
                         <label className="block font-bold text-gray-700 mb-1">
-                            Email trường cấp *
+                            Email
                         </label>
                         <input
                             type="email"
-                            required
                             placeholder="namtv@qnu.edu.vn"
-                            value={formData.email}
+                            value={formData.email || ""}
                             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                             className="w-full px-2.5 py-1.5 border border-gray-300 bg-white text-xs font-mono focus:outline-none"
                         />
                     </div>
 
                     <div className="grid grid-cols-2 gap-2">
+                        {/* Đổi form field thành Lớp */}
                         <div>
                             <label className="block font-bold text-gray-700 mb-1">
-                                Khoa đào tạo
+                                Lớp
                             </label>
                             <input
                                 type="text"
-                                value={formData.khoa}
-                                onChange={(e) => setFormData({ ...formData, khoa: e.target.value })}
+                                placeholder="Ví dụ: KTPM46"
+                                value={formData.lop || ""}
+                                onChange={(e) => setFormData({ ...formData, lop: e.target.value })}
                                 className="w-full px-2.5 py-1.5 border border-gray-300 bg-white text-xs focus:outline-none"
                             />
                         </div>
 
+                        {/* Đổi form field thành Điện thoại */}
                         <div>
                             <label className="block font-bold text-gray-700 mb-1">
-                                Niên khóa
+                                Số điện thoại
                             </label>
                             <input
                                 type="text"
-                                value={formData.nienKhoa}
-                                onChange={(e) => setFormData({ ...formData, nienKhoa: e.target.value })}
+                                placeholder="090..."
+                                value={formData.phone || ""}
+                                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                                 className="w-full px-2.5 py-1.5 border border-gray-300 bg-white text-xs font-mono focus:outline-none"
                             />
                         </div>

@@ -42,12 +42,14 @@ export function useSinhVien() {
         }
     };
 
-    const updateSinhVien = async (maSV: string, dto: UpdateSinhVienDto) => {
+    // Sửa nhận vào tham số id (number)
+    const updateSinhVien = async (id: number, dto: UpdateSinhVienDto) => {
         setLoading(true);
         setError(null);
         try {
-            const res = await sinhVienApi.update(maSV, dto);
-            setSinhViens((prev) => prev.map((item) => (item.maSV === maSV ? res.data : item)));
+            const res = await sinhVienApi.update(id, dto);
+            // Cập nhật lại list theo id
+            setSinhViens((prev) => prev.map((item) => (item.id === id ? res.data : item)));
             setIsLive(res.isLive);
             return res.data;
         } catch (err: any) {
@@ -58,12 +60,14 @@ export function useSinhVien() {
         }
     };
 
-    const deleteSinhVien = async (maSV: string) => {
+    // Sửa nhận vào tham số id (number)
+    const deleteSinhVien = async (id: number) => {
         setLoading(true);
         setError(null);
         try {
-            await sinhVienApi.delete(maSV);
-            setSinhViens((prev) => prev.filter((item) => item.maSV !== maSV));
+            await sinhVienApi.delete(id);
+            // Lọc ra list mới theo id
+            setSinhViens((prev) => prev.filter((item) => item.id !== id));
         } catch (err: any) {
             setError(err.message || 'Lỗi khi xóa sinh viên');
             throw err;

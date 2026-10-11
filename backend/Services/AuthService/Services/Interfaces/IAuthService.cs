@@ -7,5 +7,6 @@ namespace AuthService.Services.Interfaces
         Task<AuthResponse> RegisterAsync(RegisterRequest request);
         Task<AuthResponse> LoginAsync(LoginRequest request);
         Task<TokenResponse> VerifyAsync(VerifyOtpRequest request);
+        Task<TokenResponse> RefreshTokenAsync(RefreshTokenRequest request);
     }
 }

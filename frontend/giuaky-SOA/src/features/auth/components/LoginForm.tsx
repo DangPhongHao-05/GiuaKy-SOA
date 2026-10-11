@@ -87,14 +87,14 @@ export const LoginForm: React.FC<LoginFormProps> = ({
                     </Link>
                 </div>
 
-                <div className="pt-2 border-t border-dashed border-gray-200">
+                {/* <div className="pt-2 border-t border-dashed border-gray-200">
                     <Link
                         to="/dashboard"
                         className="text-[11px] font-mono text-gray-500 hover:text-gray-900 underline"
                     >
                         [Bỏ qua đăng nhập, vào thẳng SOA Dashboard để test]
                     </Link>
-                </div>
+                </div> */}
             </div>
         </div>
     );
