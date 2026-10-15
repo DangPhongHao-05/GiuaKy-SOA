@@ -19,15 +19,9 @@ import { DangKyPage } from "../features/dangKy/pages/DangKyPage";
 // 1. COMPONENT BẢO VỆ ROUTE DÀNH CHO USER ĐÃ ĐĂNG NHẬP
 // ==========================================
 const ProtectedRoute = () => {
-  // Kiểm tra trực tiếp LocalStorage
-  const isAuthenticated = localStorage.getItem("accessToken") !== null;
-
-  // Chưa có token -> Trục xuất về trang Login
-  if (!isAuthenticated) {
-    return <Navigate to="/" replace />;
-  }
-
-  // Có token -> Cho phép đi tiếp vào layout bên trong
+  // Đã gỡ bỏ kiểm tra LocalStorage tại đây.
+  // Tuyến đường luôn mở. Việc đá người dùng ra trang chủ sẽ do Axios Interceptor
+  // xử lý khi Backend trả về mã lỗi 401.
   return <Outlet />;
 };
 
@@ -35,14 +29,14 @@ const ProtectedRoute = () => {
 // 2. COMPONENT NGĂN NGƯỜI DÙNG ĐÃ ĐĂNG NHẬP THẤY LẠI TRANG LOGIN
 // ==========================================
 const PublicRoute = () => {
-  const isAuthenticated = localStorage.getItem("accessToken") !== null;
+  // Vẫn giữ lại logic này để UX tốt hơn: Nếu user đã có token mà vô tình
+  // gõ URL "/" (trang đăng nhập), hệ thống sẽ tự động đẩy vào Dashboard.
+  const isAuthenticated = localStorage.getItem("auth-storage") !== null;
 
-  // Đã có token nhưng cố tình vào / -> Bê thẳng vào Dashboard
   if (isAuthenticated) {
     return <Navigate to="/dashboard" replace />;
   }
 
-  // Chưa có token -> Cho phép xem trang Login/Register
   return <Outlet />;
 };
 
@@ -51,7 +45,6 @@ const PublicRoute = () => {
 // ==========================================
 const router = createBrowserRouter([
   {
-    // Bọc nhóm Login/Register bằng PublicRoute
     element: <PublicRoute />,
     children: [
       {
@@ -65,12 +58,10 @@ const router = createBrowserRouter([
     ],
   },
   {
-    // Bọc toàn bộ Dashboard bằng ProtectedRoute
     path: "/dashboard",
     element: <ProtectedRoute />,
     children: [
       {
-        // MainLayout giờ trở thành con của ProtectedRoute
         element: <MainLayout />,
         children: [
           {

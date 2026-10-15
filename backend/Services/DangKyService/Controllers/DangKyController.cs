@@ -1,10 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
 using DangKyService.Services.Impl;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DangKyService.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class DangKyController(
 	DangKyServiceImpl dangKyServiceImpl
 ) : Controller {
@@ -22,9 +24,6 @@ public class DangKyController(
 	public async Task<IActionResult> create(
 		[FromBody] DangKyRequestDto request
 	) {
-		Console.WriteLine(request.sinhVienId);
-		Console.WriteLine(request.deTaiId);
-		Console.WriteLine(request.giangVienId);
 		DangKyResponseDto? response = await dangKyServiceImpl.create(request);
 
 		if (response is null) {
@@ -32,6 +31,12 @@ public class DangKyController(
 		}
 
 		return Ok(response);
+	}
+
+	public async Task<IActionResult> update(
+		[FromBody] DangKyRequestDto request
+	) {
+		//
 	}
 
 }

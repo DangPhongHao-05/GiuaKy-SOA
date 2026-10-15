@@ -16,6 +16,46 @@ declare module "axios" {
   }
 }
 
+// ==========================================
+// CÁC BIẾN QUẢN LÝ HÀNG ĐỢI REFRESH TOKEN
+// ==========================================
+let isRefreshing = false;
+let failedQueue: Array<{
+  resolve: (value?: unknown) => void;
+  reject: (reason?: any) => void;
+}> = [];
+
+const processQueue = (error: any, token: string | null = null) => {
+  failedQueue.forEach((prom) => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(token);
+    }
+  });
+  failedQueue = [];
+};
+
+// Hàm tiện ích: Trích xuất UserId (sub) trực tiếp từ Access Token
+const getUserIdFromToken = (token: string): string | null => {
+  try {
+    const payloadBase64Url = token.split(".")[1];
+    const payloadBase64 = payloadBase64Url
+      .replace(/-/g, "+")
+      .replace(/_/g, "/");
+    const payloadJson = decodeURIComponent(
+      atob(payloadBase64)
+        .split("")
+        .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+        .join(""),
+    );
+    const payload = JSON.parse(payloadJson);
+    return payload.sub || payload.nameid || null;
+  } catch (e) {
+    return null;
+  }
+};
+
 /**
  * Tạo axios instance độc lập cho từng microservice với logging & auth token tự động
  */
@@ -32,11 +72,15 @@ function createServiceClient(
     timeout: 8000,
   });
 
-  // Request interceptor
+  // ==========================================
+  // REQUEST INTERCEPTOR
+  // ==========================================
   client.interceptors.request.use(
     (requestConfig: InternalAxiosRequestConfig) => {
-      const token = localStorage.getItem("accessToken");
+      // SỬA: Đọc đúng key accessToken
+      let token = localStorage.getItem("accessToken");
       if (token) {
+        token = token.replace(/^"|"$/g, "");
         requestConfig.headers.Authorization = `Bearer ${token}`;
       }
 
@@ -65,7 +109,9 @@ function createServiceClient(
     },
   );
 
-  // Response interceptor
+  // ==========================================
+  // RESPONSE INTERCEPTOR
+  // ==========================================
   client.interceptors.response.use(
     (response: AxiosResponse) => {
       const logId = response.config._logId;
@@ -100,50 +146,92 @@ function createServiceClient(
           errorMessage: `${errMsg} (${status || "Network Error/CORS"})`,
         });
       }
+
+      // XỬ LÝ LỖI 401 UNAUTHORIZED
       if (status === 401 && !originalRequest._retry) {
-        originalRequest._retry = true; // Đánh dấu là đã thử refresh để không bị lặp vô tận
+        originalRequest._retry = true; // Đánh dấu là đã thử refresh
+
+        // NẾU HỆ THỐNG ĐANG ĐI LẤY TOKEN -> Đưa request này vào hàng đợi
+        if (isRefreshing) {
+          return new Promise(function (resolve, reject) {
+            failedQueue.push({ resolve, reject });
+          })
+            .then((token) => {
+              originalRequest.headers.Authorization = `Bearer ${token}`;
+              return client(originalRequest); // Chạy lại request bị nghẽn
+            })
+            .catch((err) => {
+              return Promise.reject(err);
+            });
+        }
+
+        // BẮT ĐẦU QUÁ TRÌNH REFRESH TOKEN
+        isRefreshing = true;
 
         try {
-          const refreshToken = localStorage.getItem("refreshToken");
-          const userId = localStorage.getItem("userId");
+          // SỬA: Lấy đúng key refreshToken
+          let refreshToken = localStorage.getItem("refreshToken");
+          let oldAccessToken = localStorage.getItem("accessToken");
+
+          if (refreshToken) refreshToken = refreshToken.replace(/^"|"$/g, "");
+          if (oldAccessToken)
+            oldAccessToken = oldAccessToken.replace(/^"|"$/g, "");
+
+          // SỬA: Tự động trích xuất userId từ AccessToken cũ thay vì phụ thuộc Zustand
+          const userId = oldAccessToken
+            ? getUserIdFromToken(oldAccessToken)
+            : null;
 
           if (!refreshToken || !userId) {
-            throw new Error(
-              "Thiếu Refresh Token hoặc UserId trong LocalStorage",
-            );
+            throw new Error("Thiếu Refresh Token hoặc UserId");
           }
 
-          // Lấy cấu hình của AuthService để biết URL
           const authConfig = getServiceConfig("auth");
-          const refreshUrl = `${authConfig.baseURL}${authConfig.endpoints?.refreshToken || "/Auth/refresh-token"}`;
+          const refreshUrl = `${authConfig.baseURL}${authConfig.endpoints?.refreshToken || "/api/Auth/refresh-token"}`;
 
-          // DÙNG AXIOS ĐỘC LẬP (không dùng authClient) để gọi lên server
           const response = await axios.post(refreshUrl, {
             userId: userId,
             refreshToken: refreshToken,
           });
 
           if (response.data && response.data.success) {
-            // Lưu token mới vào LocalStorage
-            localStorage.setItem("accessToken", response.data.accessToken);
-            localStorage.setItem("refreshToken", response.data.refreshToken);
+            const newAccessToken = response.data.accessToken;
+            const newRefreshToken = response.data.refreshToken;
 
-            // Gắn token mới vào request bị lỗi cũ và gọi lại request đó
-            originalRequest.headers.Authorization = `Bearer ${response.data.accessToken}`;
+            // SỬA: Lưu token mới theo đúng tên key
+            localStorage.setItem("accessToken", newAccessToken);
+            localStorage.setItem("refreshToken", newRefreshToken);
+
+            processQueue(null, newAccessToken);
+
+            originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
             return client(originalRequest);
           } else {
             throw new Error("Refresh Token bị từ chối");
           }
-        } catch (refreshError) {
+        } catch (refreshError: any) {
+          console.error(
+            "LỖI REFRESH TOKEN:",
+            refreshError.response?.data || refreshError.message,
+          );
+
+          processQueue(refreshError, null);
+
+          // SỬA: Xóa đúng tên key
           localStorage.removeItem("accessToken");
           localStorage.removeItem("refreshToken");
           localStorage.removeItem("userId");
-          localStorage.removeItem('userEmail');
+          localStorage.removeItem("userEmail");
+          localStorage.removeItem("auth-storage");
 
-          // Chuyển hướng người dùng về Login (Có thể điều chỉnh theo Router của bạn)
-          window.location.href = "/";
+          // Bật lại nếu muốn đá văng ra Login
+          if (window.location.pathname !== "/") {
+            window.location.href = "/";
+          }
 
           return Promise.reject(refreshError);
+        } finally {
+          isRefreshing = false;
         }
       }
 

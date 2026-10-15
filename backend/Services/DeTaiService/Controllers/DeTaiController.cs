@@ -1,5 +1,6 @@
 ﻿using DeTaiService.Data;
 using DeTaiService.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,6 +8,7 @@ namespace DeTaiService.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class DeTaiController : ControllerBase
     {
         private readonly DeTaiDbContext _context;
