@@ -47,22 +47,17 @@ public class DangKyServiceImpl(
 	}
 
 	public async Task<DangKyResponseDto?> create(DangKyRequestDto request) {
-		//SinhVienDto? sinhVienDto = await sinhVienServiceImpl.get(request.sinhVienId);
-		//DeTaiDto? deTaiDto = await deTaiServiceImpl.get(request.deTaiId);
-		//GiangVienDto? giangVienDto = await giangVienServiceImpl.get(request.giangVienId);
+		SinhVienDto? sinhVienDto = await sinhVienServiceImpl.get(request.sinhVienId);
+		DeTaiDto? deTaiDto = await deTaiServiceImpl.get(request.deTaiId);
+		GiangVienDto? giangVienDto = await giangVienServiceImpl.get(request.giangVienId);
 
-		//if ((sinhVienDto is null) || (deTaiDto is null) || (giangVienDto is null)) {
-		//	return null;
-		//}
+		if ((sinhVienDto is null) || (deTaiDto is null) || (giangVienDto is null)) {
+			return null;
+		}
 
-		//bool dangKyExists = await postgresContext.DangKies.AnyAsync(item =>
-		//	item.SinhvienId == request.sinhVienId
-		//	&& item.DetaiId == request.deTaiId
-		//);
-
-		//if (dangKyExists) {
-		//	return null;
-		//}
+		if (await exists(request)) {
+			return null;
+		}
 
 		DangKy added_dangKy = postgresContext.DangKies.Add(DangKyMapper.mapRequestToEntity(request)).Entity;
 		await postgresContext.SaveChangesAsync();

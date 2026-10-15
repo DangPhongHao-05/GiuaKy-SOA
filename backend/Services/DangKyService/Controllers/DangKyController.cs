@@ -1,12 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using DangKyService.Services.Impl;
-using Microsoft.AspNetCore.Authorization;
 
 namespace DangKyService.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize]
 public class DangKyController(
 	DangKyServiceImpl dangKyServiceImpl
 ) : Controller {
@@ -33,10 +31,10 @@ public class DangKyController(
 		return Ok(response);
 	}
 
-	public async Task<IActionResult> update(
-		[FromBody] DangKyRequestDto request
-	) {
-		//
-	}
+	//public async Task<IActionResult> update(
+	//	[FromBody] DangKyRequestDto request
+	//) {
+	//	//
+	//}
 
 }
