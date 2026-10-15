@@ -1,12 +1,10 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using DangKyService.Services.Impl;
-using Microsoft.AspNetCore.Authorization;
 
 namespace DangKyService.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize]
 public class DangKyController(
 	DangKyServiceImpl dangKyServiceImpl
 ) : Controller {
@@ -24,7 +22,25 @@ public class DangKyController(
 	public async Task<IActionResult> create(
 		[FromBody] DangKyRequestDto request
 	) {
-		DangKyResponseDto? response = await dangKyServiceImpl.create(request);
+		string? authorization = Request.Headers.Authorization;
+
+		if (string.IsNullOrEmpty(authorization)) {
+			return Unauthorized("Missing Authorization header");
+		}
+
+		// authorization có dạng: Bearer eyJhbGciOi...
+		string? token = authorization.StartsWith(
+			"Bearer ",
+			StringComparison.OrdinalIgnoreCase
+		)
+			? authorization["Bearer ".Length..].Trim()
+			: null;
+
+		if (string.IsNullOrEmpty(token)) {
+			return Unauthorized("Invalid Bearer Token");
+		}
+
+		DangKyResponseDto? response = await dangKyServiceImpl.create(token, request);
 
 		if (response is null) {
 			return BadRequest();
@@ -33,10 +49,17 @@ public class DangKyController(
 		return Ok(response);
 	}
 
-	public async Task<IActionResult> update(
-		[FromBody] DangKyRequestDto request
-	) {
-		//
-	}
+	//[HttpPatch]
+	//public async Task<IActionResult> update(
+	//	[FromBody] DangKyRequestDto request
+	//) {
+	//	DangKyResponseDto? response = await dangKyServiceImpl.update(request);
+
+	//	if (response is null) {
+	//		return BadRequest();
+	//	}
+
+	//	return Ok(response);
+	//}
 
 }

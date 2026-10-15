@@ -46,23 +46,33 @@ public class DangKyServiceImpl(
 		return dangKyDtoList;
 	}
 
-	public async Task<DangKyResponseDto?> create(DangKyRequestDto request) {
-		//SinhVienDto? sinhVienDto = await sinhVienServiceImpl.get(request.sinhVienId);
-		//DeTaiDto? deTaiDto = await deTaiServiceImpl.get(request.deTaiId);
-		//GiangVienDto? giangVienDto = await giangVienServiceImpl.get(request.giangVienId);
+	public async Task<DangKyResponseDto?> create(string token, DangKyRequestDto request) {
+		Console.WriteLine(request.sinhVienId);
+		Console.WriteLine(request.deTaiId);
+		Console.WriteLine(request.giangVienId);
 
-		//if ((sinhVienDto is null) || (deTaiDto is null) || (giangVienDto is null)) {
-		//	return null;
-		//}
+		SinhVienDto? sinhVienDto = await sinhVienServiceImpl.get(request.sinhVienId, token);
+		DeTaiDto? deTaiDto = await deTaiServiceImpl.get(request.deTaiId, token);
+		GiangVienDto? giangVienDto = await giangVienServiceImpl.get(request.giangVienId, token);
 
-		//bool dangKyExists = await postgresContext.DangKies.AnyAsync(item =>
-		//	item.SinhvienId == request.sinhVienId
-		//	&& item.DetaiId == request.deTaiId
-		//);
+		if ((sinhVienDto is null) || (deTaiDto is null) || (giangVienDto is null)) {
+			Console.WriteLine("any null");
+			if (sinhVienDto is null) {
+				Console.WriteLine("sv null");
+			}
+			if (deTaiDto is null) {
+				Console.WriteLine("dt null");
+			}
+			if (giangVienDto is null) {
+				Console.WriteLine("gv null");
+			}
+			return null;
+		}
 
-		//if (dangKyExists) {
-		//	return null;
-		//}
+		if (await exists(request)) {
+			Console.WriteLine("exists");
+			return null;
+		}
 
 		DangKy added_dangKy = postgresContext.DangKies.Add(DangKyMapper.mapRequestToEntity(request)).Entity;
 		await postgresContext.SaveChangesAsync();
@@ -70,28 +80,28 @@ public class DangKyServiceImpl(
 		return DangKyMapper.mapEntityToResponse(added_dangKy);
 	}
 
-	public async Task<DangKyResponseDto?> update(DangKyRequestDto request) {
-		SinhVienDto? sinhVienDto = await sinhVienServiceImpl.get(request.sinhVienId);
-		DeTaiDto? deTaiDto = await deTaiServiceImpl.get(request.deTaiId);
-		GiangVienDto? giangVienDto = null;
+	//public async Task<DangKyResponseDto?> update(DangKyRequestDto request) {
+	//	SinhVienDto? sinhVienDto = await sinhVienServiceImpl.get(request.sinhVienId);
+	//	DeTaiDto? deTaiDto = await deTaiServiceImpl.get(request.deTaiId);
+	//	GiangVienDto? giangVienDto = null;
 
-		if (request.giangVienId is not null) {
-			giangVienDto = await giangVienServiceImpl.get(request.giangVienId);
-		}
+	//	if (request.giangVienId is not null) {
+	//		giangVienDto = await giangVienServiceImpl.get(request.giangVienId);
+	//	}
 
-		if ((sinhVienDto is null) || (deTaiDto is null)) {
-			return null;
-		}
+	//	if ((sinhVienDto is null) || (deTaiDto is null)) {
+	//		return null;
+	//	}
 
-		if (!await exists(request)) {
-			return null;
-		}
+	//	if (!await exists(request)) {
+	//		return null;
+	//	}
 
-		DangKy updated_dangKy = postgresContext.DangKies.Update(DangKyMapper.mapRequestToEntity(request)).Entity;
-		await postgresContext.SaveChangesAsync();
+	//	DangKy updated_dangKy = postgresContext.DangKies.Update(DangKyMapper.mapRequestToEntity(request)).Entity;
+	//	await postgresContext.SaveChangesAsync();
 
-		return DangKyMapper.mapEntityToResponse(updated_dangKy);
-	}
+	//	return DangKyMapper.mapEntityToResponse(updated_dangKy);
+	//}
 
 	public async Task<bool> exists(DangKyRequestDto request) {
 		return await postgresContext.DangKies.AnyAsync(item =>
