@@ -70,4 +70,34 @@ public class DangKyServiceImpl(
 		return DangKyMapper.mapEntityToResponse(added_dangKy);
 	}
 
+	public async Task<DangKyResponseDto?> update(DangKyRequestDto request) {
+		SinhVienDto? sinhVienDto = await sinhVienServiceImpl.get(request.sinhVienId);
+		DeTaiDto? deTaiDto = await deTaiServiceImpl.get(request.deTaiId);
+		GiangVienDto? giangVienDto = null;
+
+		if (request.giangVienId is not null) {
+			giangVienDto = await giangVienServiceImpl.get(request.giangVienId);
+		}
+
+		if ((sinhVienDto is null) || (deTaiDto is null)) {
+			return null;
+		}
+
+		if (!await exists(request)) {
+			return null;
+		}
+
+		DangKy updated_dangKy = postgresContext.DangKies.Update(DangKyMapper.mapRequestToEntity(request)).Entity;
+		await postgresContext.SaveChangesAsync();
+
+		return DangKyMapper.mapEntityToResponse(updated_dangKy);
+	}
+
+	public async Task<bool> exists(DangKyRequestDto request) {
+		return await postgresContext.DangKies.AnyAsync(item =>
+			item.SinhvienId == request.sinhVienId
+			&& item.DetaiId == request.deTaiId
+		);
+	}
+
 }
