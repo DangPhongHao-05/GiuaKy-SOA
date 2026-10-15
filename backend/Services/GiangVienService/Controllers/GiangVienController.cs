@@ -8,6 +8,7 @@ namespace GiangVienService.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class GiangVienController : ControllerBase
     {
         private readonly IGiangVienService _service;

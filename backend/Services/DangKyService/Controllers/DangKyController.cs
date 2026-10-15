@@ -1,10 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
 using DangKyService.Services.Impl;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DangKyService.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class DangKyController(
 	DangKyServiceImpl dangKyServiceImpl
 ) : Controller {
