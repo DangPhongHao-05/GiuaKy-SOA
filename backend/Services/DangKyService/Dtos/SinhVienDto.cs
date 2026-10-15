@@ -1,3 +1,3 @@
 public class SinhVienDto {
-	public long? id { get; set; } = null;
+	public long? Id { get; set; } = null;
 }

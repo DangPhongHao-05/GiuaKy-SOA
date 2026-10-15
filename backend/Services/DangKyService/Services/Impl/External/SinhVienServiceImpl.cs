@@ -1,30 +1,40 @@
-﻿namespace DangKyService.Services.Impl.External;
+﻿using System.Net.Http.Headers;
+using System.Net.Http.Json;
 
-public class SinhVienServiceImpl(
-	HttpClient httpClient
-) {
+namespace DangKyService.Services.Impl.External;
 
+public class SinhVienServiceImpl(HttpClient httpClient) {
 	private readonly HttpClient httpClient = httpClient;
 
-	private static readonly string PREFIX = "/api/sinhvien";
+	private static readonly string PREFIX = "/api/SinhVien";
 
-	public async Task<SinhVienDto?> get(long? id) {
+	public async Task<SinhVienDto?> get(long? id, string token) {
 		if (id is null) {
 			return null;
 		}
 
+		using var request = new HttpRequestMessage(
+			HttpMethod.Get,
+			$"{PREFIX}/{id}"
+		);
+
+		request.Headers.Authorization =
+			new AuthenticationHeaderValue("Bearer", token);
+
 		HttpResponseMessage response;
+
 		try {
-			response = await httpClient.GetAsync($"{PREFIX}/{id}");
-		} catch(Exception e) {
+			response = await httpClient.SendAsync(request);
+		} catch (HttpRequestException) {
 			return null;
 		}
 
-		if (!response.IsSuccessStatusCode) {
-			return null;
-		}
+		using (response) {
+			if (!response.IsSuccessStatusCode) {
+				return null;
+			}
 
-		return await response.Content.ReadFromJsonAsync<SinhVienDto>();
+			return await response.Content.ReadFromJsonAsync<SinhVienDto>();
+		}
 	}
-
 }
