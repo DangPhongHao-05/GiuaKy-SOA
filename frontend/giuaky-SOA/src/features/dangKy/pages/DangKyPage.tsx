@@ -27,14 +27,10 @@ export const DangKyPage: React.FC = () => {
     const [formError, setFormError] = useState('');
     const [submitting, setSubmitting] = useState(false);
 
-    const getNumericGvId = (gv: { id?: string; maGV: string }, index: number): number => {
-        return Number(gv.id) || Number(gv.maGV?.replace(/\D/g, '')) || (index + 1);
-    };
-
     const handleOpenAdd = () => {
         const defaultSvId = sinhViens[0]?.id || 0;
         const defaultDtId = deTais[0]?.id || 0;
-        const defaultGvId = giangViens[0] ? getNumericGvId(giangViens[0], 0) : 0;
+        const defaultGvId = giangViens[0]?.id || 0;
 
         setFormData({
             sinhVienId: defaultSvId,
@@ -106,14 +102,7 @@ export const DangKyPage: React.FC = () => {
             header: 'Giảng viên hướng dẫn (GiangVien :7004)',
             key: 'giangVienId',
             render: (item) => {
-                const gv = giangViens.find((g, idx) => {
-                    const gId = getNumericGvId(g, idx);
-                    return (
-                        gId === item.giangVienId ||
-                        g.maGV === String(item.giangVienId) ||
-                        g.id === String(item.giangVienId)
-                    );
-                });
+                const gv = giangViens.find((g) => g.id === item.giangVienId);
                 return (
                     <div>
                         <span className="font-bold text-gray-900">
@@ -242,14 +231,11 @@ export const DangKyPage: React.FC = () => {
                             className="w-full px-2.5 py-1.5 border border-gray-300 bg-white text-xs focus:outline-none"
                         >
                             <option value="">-- Chọn giảng viên hướng dẫn --</option>
-                            {giangViens.map((gv, idx) => {
-                                const gId = getNumericGvId(gv, idx);
-                                return (
-                                    <option key={gv.maGV || gv.id || idx} value={gId}>
-                                        [{gv.maGV}] {gv.hoTen} - {gv.boMon || gv.hocVi || 'Giảng viên'}
-                                    </option>
-                                );
-                            })}
+                            {giangViens.map((gv) => (
+                                <option key={gv.id} value={gv.id}>
+                                    [{gv.maGV || gv.id}] {gv.hoTen} - {gv.boMon || gv.hocVi || 'Giảng viên'}
+                                </option>
+                            ))}
                         </select>
                     </div>
 

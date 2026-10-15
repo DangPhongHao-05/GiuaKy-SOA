@@ -1,11 +1,11 @@
 export interface GiangVien {
-    id?: string;
-    maGV: string;
+    id: number;
+    maGV?: string;
     hoTen: string;
     email: string;
     boMon: string;
     hocVi: string;
 }
 
-export type CreateGiangVienDto = GiangVien;
-export type UpdateGiangVienDto = Partial<Omit<GiangVien, 'maGV'>>;
+export type CreateGiangVienDto = Omit<GiangVien, 'id'> & { id?: number };
+export type UpdateGiangVienDto = Partial<Omit<GiangVien, 'id'>>;

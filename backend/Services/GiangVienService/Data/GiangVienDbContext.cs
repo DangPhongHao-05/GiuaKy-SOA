@@ -16,8 +16,9 @@ namespace GiangVienService.Data
             modelBuilder.Entity<GiangVien>(entity =>
             {
                 entity.ToTable("giang_vien");
-                entity.HasKey(e => e.MaGV);
+                entity.HasKey(e => e.Id);
 
+                entity.Property(e => e.Id).HasColumnName("id").ValueGeneratedOnAdd();
                 entity.Property(e => e.MaGV).HasColumnName("ma_gv").HasMaxLength(50);
                 entity.Property(e => e.HoTen).HasColumnName("ho_ten").HasMaxLength(200).IsRequired();
                 entity.Property(e => e.Email).HasColumnName("email").HasMaxLength(200).IsRequired();
@@ -29,6 +30,7 @@ namespace GiangVienService.Data
                 entity.HasData(
                     new GiangVien
                     {
+                        Id = 1,
                         MaGV = "GV001",
                         HoTen = "TS. Nguyễn Văn Toàn",
                         Email = "toannv@qnu.edu.vn",
@@ -38,6 +40,7 @@ namespace GiangVienService.Data
                     },
                     new GiangVien
                     {
+                        Id = 2,
                         MaGV = "GV002",
                         HoTen = "ThS. Trần Thị Mai",
                         Email = "maitt@qnu.edu.vn",
@@ -47,6 +50,7 @@ namespace GiangVienService.Data
                     },
                     new GiangVien
                     {
+                        Id = 3,
                         MaGV = "GV003",
                         HoTen = "PGS.TS. Lê Đình Minh",
                         Email = "minhld@qnu.edu.vn",
@@ -56,6 +60,7 @@ namespace GiangVienService.Data
                     },
                     new GiangVien
                     {
+                        Id = 4,
                         MaGV = "GV004",
                         HoTen = "ThS. Phạm Quốc Cường",
                         Email = "cuongpq@qnu.edu.vn",
