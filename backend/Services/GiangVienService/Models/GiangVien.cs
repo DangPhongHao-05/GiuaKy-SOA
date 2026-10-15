@@ -8,20 +8,15 @@ namespace GiangVienService.Models
     public class GiangVien
     {
         [Key]
+        [Column("id")]
+        [JsonPropertyName("id")]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public long Id { get; set; }
+
         [Column("ma_gv")]
         [JsonPropertyName("maGV")]
-        [Required(ErrorMessage = "Mã giảng viên không được để trống")]
         [MaxLength(50)]
-        public string MaGV { get; set; } = string.Empty;
-
-        // Định danh Id kiểu string ánh xạ song song với MaGV
-        [NotMapped]
-        [JsonPropertyName("id")]
-        public string Id
-        {
-            get => MaGV;
-            set => MaGV = value;
-        }
+        public string? MaGV { get; set; }
 
         [Column("ho_ten")]
         [JsonPropertyName("hoTen")]

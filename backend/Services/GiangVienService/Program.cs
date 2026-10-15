@@ -80,14 +80,24 @@ using (var scope = app.Services.CreateScope())
     try
     {
         const string createTableSql = @"
-            CREATE TABLE IF NOT EXISTS public.giang_vien (
-                ma_gv VARCHAR(50) PRIMARY KEY,
-                ho_ten VARCHAR(200) NOT NULL,
-                email VARCHAR(200) NOT NULL,
-                bo_mon VARCHAR(100),
-                hoc_vi VARCHAR(100),
-                created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-            );";
+            DO $$
+            BEGIN
+                IF NOT EXISTS (
+                    SELECT 1 FROM information_schema.columns 
+                    WHERE table_schema = 'public' AND table_name = 'giang_vien' AND column_name = 'id'
+                ) THEN
+                    DROP TABLE IF EXISTS public.giang_vien CASCADE;
+                    CREATE TABLE public.giang_vien (
+                        id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+                        ma_gv VARCHAR(50),
+                        ho_ten VARCHAR(200) NOT NULL,
+                        email VARCHAR(200) NOT NULL,
+                        bo_mon VARCHAR(100),
+                        hoc_vi VARCHAR(100),
+                        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+                    );
+                END IF;
+            END $$;";
         db.Database.ExecuteSqlRaw(createTableSql);
 
         if (!db.GiangViens.Any())
@@ -131,7 +141,7 @@ using (var scope = app.Services.CreateScope())
                 }
             );
             db.SaveChanges();
-            Console.WriteLine("[Supabase]: Đã khởi tạo bảng giang_vien và nạp seed data thành công.");
+            Console.WriteLine("[Supabase]: Đã khởi tạo bảng giang_vien với khóa chính id (long) và nạp seed data thành công.");
         }
         else
         {

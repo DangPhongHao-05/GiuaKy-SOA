@@ -40,11 +40,11 @@ namespace GiangVienService.Controllers
 
         // 2. GET: /api/GiangVien/{id}
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(string id)
+        public async Task<IActionResult> GetById(long id)
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(id))
+                if (id <= 0)
                 {
                     return BadRequest(new { message = "Mã định danh giảng viên không hợp lệ" });
                 }
@@ -79,19 +79,13 @@ namespace GiangVienService.Controllers
                     return BadRequest(ModelState);
                 }
 
-                var id = (!string.IsNullOrWhiteSpace(dto.Id) ? dto.Id : dto.MaGV ?? string.Empty).Trim();
-                if (string.IsNullOrWhiteSpace(id))
+                if (dto.Id.HasValue && dto.Id.Value > 0 && await _service.ExistsAsync(dto.Id.Value))
                 {
-                    return BadRequest(new { message = "Mã giảng viên (id / maGV) không được để trống" });
-                }
-
-                if (await _service.ExistsAsync(id))
-                {
-                    return BadRequest(new { message = $"Mã giảng viên '{id}' đã tồn tại trong hệ thống!" });
+                    return BadRequest(new { message = $"Giảng viên với id '{dto.Id.Value}' đã tồn tại trong hệ thống!" });
                 }
 
                 var created = await _service.CreateAsync(dto);
-                return CreatedAtAction(nameof(GetById), new { id = created.MaGV }, created);
+                return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
             }
             catch (Exception ex)
             {
@@ -106,11 +100,11 @@ namespace GiangVienService.Controllers
 
         // 4. PUT: /api/GiangVien/{id}
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(string id, [FromBody] UpdateGiangVienDto dto)
+        public async Task<IActionResult> Update(long id, [FromBody] UpdateGiangVienDto dto)
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(id))
+                if (id <= 0)
                 {
                     return BadRequest(new { message = "Mã định danh giảng viên không hợp lệ" });
                 }
@@ -145,11 +139,11 @@ namespace GiangVienService.Controllers
 
         // 5. DELETE: /api/GiangVien/{id}
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(string id)
+        public async Task<IActionResult> Delete(long id)
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(id))
+                if (id <= 0)
                 {
                     return BadRequest(new { message = "Mã định danh giảng viên không hợp lệ" });
                 }

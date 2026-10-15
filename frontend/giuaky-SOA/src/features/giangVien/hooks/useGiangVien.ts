@@ -42,12 +42,12 @@ export function useGiangVien() {
         }
     };
 
-    const updateGiangVien = async (maGV: string, dto: UpdateGiangVienDto) => {
+    const updateGiangVien = async (id: number, dto: UpdateGiangVienDto) => {
         setLoading(true);
         setError(null);
         try {
-            const res = await giangVienApi.update(maGV, dto);
-            setGiangViens((prev) => prev.map((item) => (item.maGV === maGV ? res.data : item)));
+            const res = await giangVienApi.update(id, dto);
+            setGiangViens((prev) => prev.map((item) => (item.id === id ? res.data : item)));
             setIsLive(res.isLive);
             return res.data;
         } catch (err: any) {
@@ -58,12 +58,12 @@ export function useGiangVien() {
         }
     };
 
-    const deleteGiangVien = async (maGV: string) => {
+    const deleteGiangVien = async (id: number) => {
         setLoading(true);
         setError(null);
         try {
-            await giangVienApi.delete(maGV);
-            setGiangViens((prev) => prev.filter((item) => item.maGV !== maGV));
+            await giangVienApi.delete(id);
+            setGiangViens((prev) => prev.filter((item) => item.id !== id));
         } catch (err: any) {
             setError(err.message || 'Lỗi khi xóa giảng viên');
             throw err;

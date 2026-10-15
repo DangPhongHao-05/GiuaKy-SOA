@@ -36,15 +36,21 @@ export const GiangVienPage: React.FC = () => {
 
     const handleOpenEdit = (item: GiangVien) => {
         setEditingItem(item);
-        setFormData(item);
+        setFormData({
+            maGV: item.maGV || '',
+            hoTen: item.hoTen,
+            email: item.email,
+            boMon: item.boMon,
+            hocVi: item.hocVi,
+        });
         setFormError('');
         setIsModalOpen(true);
     };
 
     const handleDelete = async (item: GiangVien) => {
-        if (window.confirm(`Xác nhận xóa giảng viên "${item.hoTen}" (${item.maGV})?`)) {
+        if (window.confirm(`Xác nhận xóa giảng viên "${item.hoTen}" (#${item.id})?`)) {
             try {
-                await deleteGiangVien(item.maGV);
+                await deleteGiangVien(item.id);
             } catch (err: any) {
                 alert(err.message || 'Lỗi khi xóa giảng viên');
             }
@@ -53,8 +59,8 @@ export const GiangVienPage: React.FC = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!formData.maGV.trim() || !formData.hoTen.trim() || !formData.email.trim()) {
-            setFormError('Vui lòng điền đầy đủ Mã GV, Họ tên và Email');
+        if (!formData.hoTen.trim() || !formData.email.trim()) {
+            setFormError('Vui lòng điền đầy đủ Họ tên và Email');
             return;
         }
 
@@ -63,7 +69,8 @@ export const GiangVienPage: React.FC = () => {
 
         try {
             if (editingItem) {
-                await updateGiangVien(editingItem.maGV, {
+                await updateGiangVien(editingItem.id, {
+                    maGV: formData.maGV,
                     hoTen: formData.hoTen,
                     email: formData.email,
                     boMon: formData.boMon,
@@ -82,10 +89,16 @@ export const GiangVienPage: React.FC = () => {
 
     const columns: ColumnDef<GiangVien>[] = [
         {
+            header: 'ID',
+            key: 'id',
+            className: 'w-16 font-mono font-bold text-gray-700',
+            render: (item) => <span>#{item.id}</span>,
+        },
+        {
             header: 'Mã GV',
             key: 'maGV',
             className: 'w-24 font-mono font-bold text-gray-900',
-            render: (item) => <span>{item.maGV}</span>,
+            render: (item) => <span>{item.maGV || '-'}</span>,
         },
         {
             header: 'Họ tên Giảng viên',
@@ -132,20 +145,20 @@ export const GiangVienPage: React.FC = () => {
                 description="Quản lý bởi GiangVienService (:7004) - Dữ liệu độc lập"
                 columns={columns}
                 data={giangViens}
-                idKey="maGV"
+                idKey="id"
                 loading={loading}
                 onAdd={handleOpenAdd}
                 onEdit={handleOpenEdit}
                 onDelete={handleDelete}
                 onRefresh={fetchGiangViens}
                 searchPlaceholder="Mã GV, họ tên hoặc bộ môn..."
-                searchKeys={['maGV', 'hoTen', 'email', 'boMon']}
+                searchKeys={['id', 'maGV', 'hoTen', 'email', 'boMon']}
             />
 
             {/* Modal Wireframe */}
             <Modal
                 isOpen={isModalOpen}
-                title={editingItem ? `[CẬP NHẬT GIẢNG VIÊN: ${editingItem.maGV}]` : '[THÊM GIẢNG VIÊN MỚI]'}
+                title={editingItem ? `[CẬP NHẬT GIẢNG VIÊN: #${editingItem.id} - ${editingItem.hoTen}]` : '[THÊM GIẢNG VIÊN MỚI]'}
                 onClose={() => setIsModalOpen(false)}
             >
                 <form onSubmit={handleSubmit} className="space-y-3 text-xs font-mono">
@@ -157,16 +170,14 @@ export const GiangVienPage: React.FC = () => {
 
                     <div>
                         <label className="block font-bold text-gray-700 mb-1">
-                            Mã giảng viên *
+                            Mã giảng viên
                         </label>
                         <input
                             type="text"
-                            required
-                            disabled={!!editingItem}
-                            placeholder="Ví dụ: GV012"
-                            value={formData.maGV}
+                            placeholder="Ví dụ: GV012 (để trống hệ thống sẽ tự sinh)"
+                            value={formData.maGV || ''}
                             onChange={(e) => setFormData({ ...formData, maGV: e.target.value })}
-                            className="w-full px-2.5 py-1.5 border border-gray-300 bg-white text-xs font-mono focus:outline-none disabled:bg-gray-100"
+                            className="w-full px-2.5 py-1.5 border border-gray-300 bg-white text-xs font-mono focus:outline-none"
                         />
                     </div>
 
@@ -180,13 +191,13 @@ export const GiangVienPage: React.FC = () => {
                             placeholder="Ví dụ: TS. Nguyễn Văn A"
                             value={formData.hoTen}
                             onChange={(e) => setFormData({ ...formData, hoTen: e.target.value })}
-                            className="w-full px-2.5 py-1.5 border border-gray-300 bg-white text-xs focus:outline-none"
+                            className="w-full px-2.5 py-1.5 border border-gray-300 bg-white text-xs font-mono focus:outline-none"
                         />
                     </div>
 
                     <div>
                         <label className="block font-bold text-gray-700 mb-1">
-                            Email liên lạc *
+                            Email công vụ *
                         </label>
                         <input
                             type="email"
@@ -203,24 +214,33 @@ export const GiangVienPage: React.FC = () => {
                             <label className="block font-bold text-gray-700 mb-1">
                                 Bộ môn
                             </label>
-                            <input
-                                type="text"
-                                value={formData.boMon}
+                            <select
+                                value={formData.boMon || ''}
                                 onChange={(e) => setFormData({ ...formData, boMon: e.target.value })}
-                                className="w-full px-2.5 py-1.5 border border-gray-300 bg-white text-xs focus:outline-none"
-                            />
+                                className="w-full px-2.5 py-1.5 border border-gray-300 bg-white text-xs font-mono focus:outline-none"
+                            >
+                                <option value="Hệ thống thông tin">Hệ thống thông tin</option>
+                                <option value="Kỹ thuật phần mềm">Kỹ thuật phần mềm</option>
+                                <option value="Khoa học máy tính">Khoa học máy tính</option>
+                                <option value="Mạng máy tính & Viễn thông">Mạng & Viễn thông</option>
+                            </select>
                         </div>
 
                         <div>
                             <label className="block font-bold text-gray-700 mb-1">
-                                Học vị / Học hàm
+                                Học vị
                             </label>
-                            <input
-                                type="text"
-                                value={formData.hocVi}
+                            <select
+                                value={formData.hocVi || ''}
                                 onChange={(e) => setFormData({ ...formData, hocVi: e.target.value })}
-                                className="w-full px-2.5 py-1.5 border border-gray-300 bg-white text-xs focus:outline-none"
-                            />
+                                className="w-full px-2.5 py-1.5 border border-gray-300 bg-white text-xs font-mono focus:outline-none"
+                            >
+                                <option value="Cử nhân">Cử nhân</option>
+                                <option value="Thạc sĩ">Thạc sĩ</option>
+                                <option value="Tiến sĩ">Tiến sĩ</option>
+                                <option value="Phó Giáo sư">Phó Giáo sư</option>
+                                <option value="Giáo sư">Giáo sư</option>
+                            </select>
                         </div>
                     </div>
 
@@ -237,7 +257,7 @@ export const GiangVienPage: React.FC = () => {
                             disabled={submitting}
                             className="px-3 py-1.5 border border-gray-900 bg-gray-900 hover:bg-gray-800 text-white text-xs font-bold disabled:opacity-50 cursor-pointer"
                         >
-                            {submitting ? '[Đang lưu...]' : editingItem ? '[Lưu thay đổi]' : '[Thêm giảng viên]'}
+                            {submitting ? '[Đang lưu...]' : editingItem ? '[Cập nhật]' : '[Thêm mới]'}
                         </button>
                     </div>
                 </form>

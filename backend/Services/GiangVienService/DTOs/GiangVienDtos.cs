@@ -5,9 +5,8 @@ namespace GiangVienService.DTOs
 {
     public class CreateGiangVienDto
     {
-        [MaxLength(50)]
         [JsonPropertyName("id")]
-        public string? Id { get; set; }
+        public long? Id { get; set; }
 
         [MaxLength(50)]
         [JsonPropertyName("maGV")]
@@ -35,6 +34,10 @@ namespace GiangVienService.DTOs
 
     public class UpdateGiangVienDto
     {
+        [MaxLength(50)]
+        [JsonPropertyName("maGV")]
+        public string? MaGV { get; set; }
+
         [MaxLength(200)]
         [JsonPropertyName("hoTen")]
         public string? HoTen { get; set; }
