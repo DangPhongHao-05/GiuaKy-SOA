@@ -194,7 +194,7 @@ function createServiceClient(
             refreshToken: refreshToken,
           });
 
-          if (response.data && response.data.success) {
+          if (response.data && response.data.accessToken) {
             const newAccessToken = response.data.accessToken;
             const newRefreshToken = response.data.refreshToken;
 

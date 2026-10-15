@@ -29,9 +29,8 @@ const ProtectedRoute = () => {
 // 2. COMPONENT NGĂN NGƯỜI DÙNG ĐÃ ĐĂNG NHẬP THẤY LẠI TRANG LOGIN
 // ==========================================
 const PublicRoute = () => {
-  // Vẫn giữ lại logic này để UX tốt hơn: Nếu user đã có token mà vô tình
-  // gõ URL "/" (trang đăng nhập), hệ thống sẽ tự động đẩy vào Dashboard.
-  const isAuthenticated = localStorage.getItem("auth-storage") !== null;
+  // Đổi từ auth-storage sang kiểm tra refreshToken hoặc accessToken
+  const isAuthenticated = !!localStorage.getItem("refreshToken") || !!localStorage.getItem("accessToken");
 
   if (isAuthenticated) {
     return <Navigate to="/dashboard" replace />;
