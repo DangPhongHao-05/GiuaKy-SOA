@@ -48,8 +48,64 @@ using (var scope = app.Services.CreateScope())
     var db = scope.ServiceProvider.GetRequiredService<GiangVienDbContext>();
     try
     {
-        db.Database.EnsureCreated();
-        Console.WriteLine("[Supabase]: Kiểm tra và khởi tạo bảng giang_vien thành công.");
+        const string createTableSql = @"
+            CREATE TABLE IF NOT EXISTS public.giang_vien (
+                ma_gv VARCHAR(50) PRIMARY KEY,
+                ho_ten VARCHAR(200) NOT NULL,
+                email VARCHAR(200) NOT NULL,
+                bo_mon VARCHAR(100),
+                hoc_vi VARCHAR(100),
+                created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+            );";
+        db.Database.ExecuteSqlRaw(createTableSql);
+
+        if (!db.GiangViens.Any())
+        {
+            db.GiangViens.AddRange(
+                new GiangVienService.Models.GiangVien
+                {
+                    MaGV = "GV001",
+                    HoTen = "TS. Nguyễn Văn Toàn",
+                    Email = "toannv@qnu.edu.vn",
+                    BoMon = "Hệ thống thông tin",
+                    HocVi = "Tiến sĩ",
+                    CreatedAt = DateTime.UtcNow
+                },
+                new GiangVienService.Models.GiangVien
+                {
+                    MaGV = "GV002",
+                    HoTen = "ThS. Trần Thị Mai",
+                    Email = "maitt@qnu.edu.vn",
+                    BoMon = "Kỹ thuật phần mềm",
+                    HocVi = "Thạc sĩ",
+                    CreatedAt = DateTime.UtcNow
+                },
+                new GiangVienService.Models.GiangVien
+                {
+                    MaGV = "GV003",
+                    HoTen = "PGS.TS. Lê Đình Minh",
+                    Email = "minhld@qnu.edu.vn",
+                    BoMon = "Khoa học máy tính",
+                    HocVi = "Phó Giáo sư",
+                    CreatedAt = DateTime.UtcNow
+                },
+                new GiangVienService.Models.GiangVien
+                {
+                    MaGV = "GV004",
+                    HoTen = "ThS. Phạm Quốc Cường",
+                    Email = "cuongpq@qnu.edu.vn",
+                    BoMon = "Mạng máy tính & Viễn thông",
+                    HocVi = "Thạc sĩ",
+                    CreatedAt = DateTime.UtcNow
+                }
+            );
+            db.SaveChanges();
+            Console.WriteLine("[Supabase]: Đã khởi tạo bảng giang_vien và nạp seed data thành công.");
+        }
+        else
+        {
+            Console.WriteLine("[Supabase]: Bảng giang_vien đã tồn tại sẵn dữ liệu.");
+        }
     }
     catch (Exception ex)
     {
