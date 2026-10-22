@@ -28,7 +28,6 @@ public class DangKyController(
 			return Unauthorized("Missing Authorization header");
 		}
 
-		// authorization có dạng: Bearer eyJhbGciOi...
 		string? token = authorization.StartsWith(
 			"Bearer ",
 			StringComparison.OrdinalIgnoreCase
@@ -41,6 +40,19 @@ public class DangKyController(
 		}
 
 		DangKyResponseDto? response = await dangKyServiceImpl.create(token, request);
+
+		if (response is null) {
+			return BadRequest();
+		}
+
+		return Ok(response);
+	}
+
+	[HttpDelete("{id}")]
+	public async Task<IActionResult> delete(
+		[FromRoute] long id
+	) {
+		DangKyResponseDto? response = await dangKyServiceImpl.delete(id);
 
 		if (response is null) {
 			return BadRequest();
