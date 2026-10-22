@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SinhVienService.Data;
+using SinhVienService.Filters;
 using SinhVienService.Models;
 
 namespace SinhVienService.Controllers
@@ -33,6 +34,8 @@ namespace SinhVienService.Controllers
         }
 
         [HttpPost]
+        [InternalApiKey]
+        [AllowAnonymous]
         public async Task<ActionResult<SinhVien>> Create(SinhVien sinhVien)
         {
             _db.SinhViens.Add(sinhVien);
